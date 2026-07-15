@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BALLONTV - بث مباشر للمباريات</title>
+    
+    <!-- HLS.js لخدمة البث المباشر -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #1a237e; /* أزرق داكن */
+            --accent: #ffd700;  /* ذهبي */
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+            --text: #ffffff;
+            --muted: #a0a0a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: var(--bg); color: var(--text); padding-bottom: 70px; }
+
+        /* الهيدر */
+        header {
+            background: var(--primary);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; color: var(--accent); letter-spacing: 1px; }
+        .logo span { color: white; }
+
+        .live-badge {
+            background: red;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;} }
+
+        /* المشغل */
+        .player-container {
+            width: 100%;
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+        }
+
+        video { width: 100%; height: 100%; }
+
+        /* القائمة السفلية */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+        }
+
+        .nav-item {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+
+        /* الأقسام */
+        .page { display: none; padding: 15px; }
+        .page.active { display: block; }
+
+        /* كروت المباريات */
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #222;
+        }
+
+        .match-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+        .match-teams { display: flex; align-items: center; justify-content: space-around; }
+        .team { text-align: center; flex: 1; }
+        .team img { width: 40px; height: 40px; object-fit: contain; }
+        .score { font-size: 24px; font-weight: bold; flex: 1; text-align: center; }
+
+        /* قائمة القنوات */
+        .channels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .channel-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        .channel-card:hover { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">BALLON<span>TV</span></div>
+    <div class="live-badge">مباشر</div>
+</header>
+
+<div id="home" class="page active">
+    <h3 style="margin-bottom:15px;">مباريات اليوم</h3>
+    <div id="matches-list">
+        <div class="match-card">
+            <div class="match-header"><span>كأس العالم 2026</span> <span>10:00 م</span></div>
+            <div class="match-teams">
+                <div class="team"><div>🇸🇦</div><p>السعودية</p></div>
+                <div class="score">0 - 0</div>
+                <div class="team"><div>🇦🇷</div><p>الأرجنتين</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="live" class="page">
+    <div class="player-container">
+        <video id="video" controls></video>
+    </div>
+    <h3 style="margin: 20px 0 10px;">اختر القناة</h3>
+    <div class="channels-grid" id="channels-list">
+        <!-- القنوات سيتم تحميلها هنا -->
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="showPage('home', this)">🏠<span>الرئيسية</span></div>
+    <div class="nav-item" onclick="showPage('live', this)">📺<span>بث مباشر</span></div>
+    <div class="nav-item" onclick="window.open('https://t.me/your_telegram', '_blank')">💬<span>تلجرام</span></div>
+</nav>
+
+<script>
+    // التنقل بين الصفحات
+    function showPage(pageId, element) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        element.classList.add('active');
+    }
+
+    // تشغيل البث
+    function playStream(url) {
+        const video = document.getElementById('video');
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+            video.addEventListener('loadedmetadata', () => video.play());
+        }
+    }
+
+    // تحميل القنوات من ملف JSON
+    async function loadChannels() {
+        const response = await fetch('channels.json');
+        const data = await response.json();
+        const list = document.getElementById('channels-list');
+        
+        data.channels.forEach(ch => {
+            const div = document.createElement('div');
+            div.className = 'channel-card';
+            div.innerHTML = `<strong>${ch.name}</strong><br><small>${ch.quality}</small>`;
+            div.onclick = () => {
+                playStream(ch.url);
+                window.scrollTo(0, 0);
+            };
+            list.appendChild(div);
+        });
+    }
+
+    loadChannels();
+</script>
+
+</body>
+</html>
