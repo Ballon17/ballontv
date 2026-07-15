@@ -1,251 +1,224 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BALLON TV - البث المباشر</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BALLONTV | البث المباشر للمباريات</title>
+    
+    <!-- مكتبة المشغل Clappr -->
+    <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
 
-<style>
-/* الألوان الأساسية */
-:root {
-  --main-red: #ff0000;
-  --bg-black: #050505;
-  --accent-gold: #ffd700;
-}
+    <style>
+        :root {
+            --main_color: #931800; /* لون يلا شوت الأحمر */
+            --body_bg: #eceef2;
+            --header_bg: #fff;
+            --header_color: #222;
+            --card_bg: #ffffff;
+            --text_color: #222;
+        }
 
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Open Sans',sans-serif;
-  background:var(--bg-black);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  min-height:100vh;
-  padding:10px;
-}
-.wrapper{ width:100%; max-width:1100px; }
+        /* الوضع الليلي */
+        .Night {
+            --body_bg: #121a23;
+            --header_bg: #263545;
+            --header_color: #fff;
+            --card_bg: #1c2733;
+            --text_color: #fff;
+        }
 
-/* الهيدر */
-.header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.logo { font-family: 'Bebas Neue', cursive; font-size: 28px; color: var(--main-red); text-shadow: 0 0 10px rgba(255,0,0,0.3); }
-.logo span { color: #fff; }
+        * { padding: 0; margin: 0; box-sizing: border-box; list-style: none; text-decoration: none; }
+        body { background: var(--body_bg); color: var(--text_color); font-family: 'Segoe UI', Tahoma, sans-serif; transition: 0.3s; }
 
-.badge-live{
-  font-size:11px; padding:3px 12px; border-radius:999px;
-  background:linear-gradient(90deg,#ff0000,#cc0000);
-  box-shadow:0 0 10px rgba(255,0,0,.6); animation: pulse 1.5s infinite;
-}
-@keyframes pulse { 0% {opacity:1} 50% {opacity:0.6} 100% {opacity:1} }
+        header {
+            background: var(--header_bg); padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: var(--main_color); }
+        .logo span { color: var(--header_color); }
 
-.view-count{
-  font-size:11px; padding:4px 10px; border-radius:999px;
-  background:rgba(239,68,68,.1); border:1px solid rgba(255,0,0,0.3); color: var(--main-red);
-}
+        .btn-mode { cursor: pointer; background: var(--main_color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; }
 
-/* المشغل الاحترافي */
-.player-shell{
-  position:relative; border-radius:12px; overflow:hidden;
-  background:#000; box-shadow:0 0 30px rgba(0,0,0,1);
-  border:1px solid rgba(255,0,0,.3);
-}
-.player-frame{ position:relative; width:100%; padding-top:56.25%; overflow:hidden; }
-.player-frame video{ position:absolute; top:0;left:0; width:100%; height:100%; background:#000; }
+        /* منطقة المشغل والسيرفرات */
+        .player-area { background: #000; width: 100%; aspect-ratio: 16/9; }
+        #player { width: 100% !important; height: 100% !important; }
 
-.controls{
-  position:absolute; left:0;right:0;bottom:0; padding:10px;
-  display:flex; align-items:center; gap:10px;
-  background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
-  z-index:3; transition:opacity .3s;
-}
-.ctrl-btn{
-  border:none; background:rgba(255,255,255,0.1); color:#fff;
-  width:35px; height:35px; border-radius:50%; cursor:pointer; font-size:14px;
-}
-.hd-toggle{ display:flex; background:rgba(0,0,0,0.6); border-radius:20px; padding:2px; border:1px solid #333; }
-.hd-pill{ padding:2px 10px; font-size:10px; cursor:pointer; border-radius:15px; opacity:0.5; }
-.hd-pill.active{ background:var(--main-red); opacity:1; color:#000; font-weight:bold; }
+        .video-serv { display: flex; overflow-x: auto; background: #1f2024; padding: 10px; gap: 10px; }
+        .video-serv span { 
+            background: var(--main_color); color: white; padding: 6px 15px; 
+            border-radius: 4px; cursor: pointer; font-size: 14px; white-space: nowrap; 
+        }
+        .video-serv span.active { background: #555; }
 
-.vol-container{ display:flex; align-items:center; gap:5px; margin-right:auto; }
-.vol-slider{ appearance:none; width:60px; height:3px; background:#444; border-radius:5px; outline:none; }
-.vol-slider::-webkit-slider-thumb{ appearance:none; width:10px; height:10px; background:var(--main-red); border-radius:50%; cursor:pointer; }
+        /* المحتوى */
+        .container { padding: 15px; max-width: 1000px; margin: auto; }
 
-/* الإعلانات */
-.ad-slot { 
-    background: #111; margin: 15px 0; padding: 12px; border: 1px dashed #444; 
-    text-align: center; border-radius: 8px; 
-}
-.ad-slot a { color: var(--accent-gold); text-decoration: none; font-weight: bold; font-size: 14px; }
+        /* إعلان علوي */
+        .ad-box { background: #fff; border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; text-align: center; border-radius: 8px; }
+        .ad-box a { color: var(--main_color); font-weight: bold; font-size: 14px; }
 
-/* شبكة القنوات */
-.title { font-size: 18px; color: var(--accent-gold); margin: 20px 0 10px; border-right: 4px solid var(--main-red); padding-right: 10px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-.ch-card { 
-    background:#111; padding:15px 10px; border-radius:10px; text-align:center; 
-    cursor:pointer; border:1px solid #222; transition: 0.3s;
-}
-.ch-card:hover { border-color: var(--main-red); background: #1a0000; }
-.ch-card strong { font-size:13px; display:block; margin-bottom:5px; }
-.ch-card span { font-size:10px; color: #666; }
+        /* بطاقة المباراة */
+        .match-banner {
+            background: #1c2733; border-radius: 8px; overflow: hidden; margin-bottom: 20px;
+            border: 1px solid var(--main_color);
+        }
+        .match-head { background: var(--main_color); color: white; padding: 8px; text-align: center; font-size: 14px; }
+        .match-teams { display: flex; align-items: center; justify-content: space-around; padding: 20px; color: white; }
+        .team { text-align: center; }
+        .flag { font-size: 40px; display: block; }
+        .vs { font-size: 24px; font-weight: bold; color: var(--main_color); }
 
-/* زر عائم */
-.float-ad {
-    position:fixed; bottom:20px; left:20px; background:var(--main-red); color:#fff;
-    padding:10px 15px; border-radius:50px; font-weight:bold; font-size:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:999; text-decoration:none;
-}
-</style>
+        /* شبكة القنوات */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .ch-card { background: var(--card_bg); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #ddd; cursor: pointer; }
+        .ch-card strong { display: block; font-size: 14px; margin-bottom: 5px; }
+
+        /* زر تلجرام العائم */
+        .floating-btn {
+            position: fixed; bottom: 20px; left: 20px; background: #0088cc;
+            color: white; padding: 10px 15px; border-radius: 50px; font-weight: bold; z-index: 1000;
+        }
+
+        footer { text-align: center; padding: 20px; color: #888; font-size: 12px; }
+    </style>
 </head>
-<body>
+<body id="bodyTag">
 
-<div class="wrapper">
-  
-  <div class="header">
+<header>
     <div class="logo">BALLON<span>TV</span></div>
-    <span class="badge-live">مباشر</span>
-    <span class="view-count" id="viewCount">مشاهدة: 120</span>
-  </div>
+    <div class="btn-mode" onclick="toggleMode()">الوضع الليلي</div>
+</header>
 
-  <!-- المشغل الاحترافي -->
-  <div class="player-shell" id="playerShell">
-    <div class="player-frame">
-      <video id="video" playsinline muted></video>
-      <div class="controls">
-        <button class="ctrl-btn" id="btnPlay"><i class="fas fa-pause"></i></button>
-        
-        <div class="hd-toggle">
-          <div class="hd-pill active" onclick="changeQuality('M')">M</div>
-          <div class="hd-pill" onclick="changeQuality('SD')">SD</div>
-          <div class="hd-pill" onclick="changeQuality('HD')">HD</div>
-        </div>
+<!-- المشغل -->
+<div class="player-area">
+    <div id="player"></div>
+</div>
 
-        <div class="vol-container">
-          <button class="ctrl-btn" style="width:25px;height:25px;font-size:10px;" id="btnMute"><i class="fas fa-volume-up"></i></button>
-          <input type="range" min="0" max="1" step="0.1" value="1" class="vol-slider" id="volRange">
-        </div>
+<!-- السيرفرات -->
+<div class="video-serv" id="server-list">
+    <!-- السيرفرات تظهر هنا -->
+</div>
 
-        <button class="ctrl-btn" id="btnFull"><i class="fas fa-expand"></i></button>
-      </div>
+<div class="container">
+
+    <!-- إعلان 1 -->
+    <div class="ad-box">
+        <a href="https://omg10.com/4/10270118" target="_blank">📲 تحميل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
     </div>
-  </div>
 
-  <!-- إعلان 1 -->
-  <div class="ad-slot">
-      <a href="https://omg10.com/4/10270118" target="_blank">📥 تحميل تطبيق BALLON TV لمشاهدة جميع القنوات مجاناً</a>
-  </div>
+    <!-- مباراة إنجلترا ضد الأرجنتين -->
+    <div class="match-banner" onclick="loadChannel(0)">
+        <div class="match-head">بث مباشر | كأس العالم</div>
+        <div class="match-teams">
+            <div class="team"><span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>إنجلترا</div>
+            <div class="vs">VS</div>
+            <div class="team"><span class="flag">🇦🇷</span>الأرجنتين</div>
+        </div>
+        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">انقر هنا لبدء البث المباشر</div>
+    </div>
 
-  <!-- القنوات -->
-  <h2 class="title">مباراة القمة</h2>
-  <div class="grid">
-      <div class="ch-card" onclick="loadMatch('إنجلترا × الأرجنتين')">
-          <strong>🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا × الأرجنتين 🇦🇷</strong>
-          <span>بث مباشر جودة عالية</span>
-      </div>
-  </div>
+    <!-- إعلان 2 -->
+    <div class="ad-box">
+        <a href="https://omg10.com/4/10185036" target="_blank">🚀 سيرفر VIP يدعم الإنترنت الضعيف - اضغط هنا</a>
+    </div>
 
-  <!-- إعلان 2 -->
-  <div class="ad-slot">
-      <a href="https://omg10.com/4/10185036" target="_blank">🚀 سيرفر VIP سريع جداً بدون تقطيع - اضغط هنا</a>
-  </div>
+    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">قنوات beIN MAX</h3>
+    <div class="grid">
+        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN MAX 1</strong><span>HD / 4K</span></div>
+        <div class="ch-card" onclick="loadChannel(2)"><strong>beIN MAX 2</strong><span>Full HD</span></div>
+    </div>
 
-  <h2 class="title">قنوات beIN MAX</h2>
-  <div class="grid">
-      <div class="ch-card" onclick="loadMatch('beIN MAX 1')"><strong>beIN MAX 1</strong><span>HD</span></div>
-      <div class="ch-card" onclick="loadMatch('beIN MAX 2')"><strong>beIN MAX 2</strong><span>HD</span></div>
-  </div>
-
-  <!-- إعلان 3 -->
-  <div class="ad-slot">
-      <a href="https://omg10.com/4/9093521" target="_blank">🎁 شارك في مسابقة التوقعات واربح جوائز مالية</a>
-  </div>
+    <!-- إعلان 3 -->
+    <div class="ad-box" style="margin-top: 20px;">
+        <a href="https://omg10.com/4/9093521" target="_blank">📺 قنوات أجنبية وسيرفرات إضافية</a>
+    </div>
 
 </div>
 
-<!-- زر عائم إعلاني -->
-<a href="https://omg10.com/4/10241472" target="_blank" class="float-ad">🔥 سيرفر احتياطي 4K</a>
+<!-- زر عائم (إعلان 4) -->
+<a href="https://omg10.com/4/10241472" class="floating-btn" target="_blank">سيرفر احتياطي 🔥</a>
+
+<footer>BALLONTV &copy; 2024 - جميع الحقوق محفوظة</footer>
 
 <script>
-const video = document.getElementById("video");
-const btnPlay = document.getElementById("btnPlay");
-const btnMute = document.getElementById("btnMute");
-const volRange = document.getElementById("volRange");
-const btnFull = document.getElementById("btnFull");
-const viewCountEl = document.getElementById("viewCount");
+    // بيانات القنوات والسيرفرات
+    const db = [
+        {
+            name: "إنجلترا ضد الأرجنتين",
+            servers: [
+                { title: "سيرفر 1", url: "https://prod-fastly-us-west-2.video.pscp.tv/Transcoding/v1/hls/s0zbhub2tN0b0hPG6Kncn4YRd_p8LOEzPXJp9-MdIY9aTyTU7osYYNGsqd7xt4UVlVrBjIjVouz9s9pC_kUEZQ/transcode/us-west-2/periscope-replay-direct-prod-us-west-2-public/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsInZlcnNpb24iOiIyIn0.eyJFbmNvZGVyU2V0dGluZyI6ImVuY29kZXJfc2V0dGluZ183MjBwMzBfMTAiLCJIZWlnaHQiOjcyMCwiS2JwcyI6Mjc1MCwiV2lkdGgiOjEyODB9.ldktM4fCFRfkP4ZEBfZPKtlAUNAcTPkoz994YJAzWpE/dynamic_delta.m3u8?type=live" },
+                { title: "سيرفر 2", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_3.m3u8" },
+                { title: "سيرفر 3", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_5.m3u8" }
+            ]
+        },
+        {
+            name: "beIN MAX 1",
+            servers: [
+                { title: "سيرفر رئيسي", url: "https://super-livetv.pages.dev/SUPER_TV_1.m3u8" }
+            ]
+        },
+        {
+            name: "beIN MAX 2",
+            servers: [
+                { title: "سيرفر رئيسي", url: "https://cp11.adabmedia.com/hls2/sport.m3u8" }
+            ]
+        }
+    ];
 
-let hls = null;
+    // إعداد المشغل Clappr
+    var player = new Clappr.Player({
+        source: db[0].servers[0].url,
+        parentId: "#player",
+        plugins: [LevelSelector],
+        width: '100%',
+        height: '100%',
+        autoPlay: false,
+        mediacontrol: {seekbar: "#931800", buttons: "#931800"}
+    });
 
-// وظيفة تشغيل القناة
-function loadMatch(name) {
-    // روابط تجريبية (استبدلها بروابطك الحقيقية)
-    const testUrl = "https://omg10.com/4/10270118";
-    
-    if (Hls.isSupported()) {
-        if (hls) hls.destroy();
-        hls = new Hls();
-        hls.loadSource(testUrl);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = testUrl;
-        video.play();
+    // وظيفة تبديل القنوات
+    function loadChannel(index) {
+        const ch = db[index];
+        const serverList = document.getElementById('server-list');
+        serverList.innerHTML = '';
+        
+        ch.servers.forEach((srv, i) => {
+            const btn = document.createElement('span');
+            btn.innerText = srv.title;
+            btn.className = (i === 0) ? 'active' : '';
+            btn.onclick = () => {
+                player.configure({ source: srv.url });
+                player.play();
+                document.querySelectorAll('.video-serv span').forEach(s => s.classList.remove('active'));
+                btn.classList.add('active');
+                // إعلان Pop-up عند تبديل السيرفر
+                if(Math.random() > 0.6) window.open("https://omg10.com/4/9047517", "_blank");
+            };
+            serverList.appendChild(btn);
+        });
+
+        player.configure({ source: ch.servers[0].url });
+        player.play();
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
-    
-    // إعلان عشوائي عند اختيار قناة
-    if(Math.random() > 0.5) window.open("https://prod-fastly-us-west-2.video.pscp.tv/Transcoding/v1/hls/s0zbhub2tN0b0hPG6Kncn4YRd_p8LOEzPXJp9-MdIY9aTyTU7osYYNGsqd7xt4UVlVrBjIjVouz9s9pC_kUEZQ/transcode/us-west-2/periscope-replay-direct-prod-us-west-2-public/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsInZlcnNpb24iOiIyIn0.eyJFbmNvZGVyU2V0dGluZyI6ImVuY29kZXJfc2V0dGluZ183MjBwMzBfMTAiLCJIZWlnaHQiOjcyMCwiS2JwcyI6Mjc1MCwiV2lkdGgiOjEyODB9.ldktM4fCFRfkP4ZEBfZPKtlAUNAcTPkoz994YJAzWpE/dynamic_delta.m3u8?type=live", "_blank");
-}
 
-// التحكم في الفيديو
-btnPlay.onclick = () => {
-    if (video.paused) {
-        video.play();
-        btnPlay.innerHTML = '<i class="fas fa-pause"></i>';
-    } else {
-        video.pause();
-        btnPlay.innerHTML = '<i class="fas fa-play"></i>';
+    // الوضع الليلي
+    function toggleMode() {
+        document.body.classList.toggle('Night');
     }
-};
 
-btnMute.onclick = () => {
-    video.muted = !video.muted;
-    btnMute.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-};
+    // تفعيل أول قناة
+    loadChannel(0);
 
-volRange.oninput = (e) => {
-    video.volume = e.target.value;
-};
-
-btnFull.onclick = () => {
-    if (video.requestFullscreen) video.requestFullscreen();
-    else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-};
-
-// عداد وهمي
-let viewers = 150;
-setInterval(() => {
-    viewers += Math.floor(Math.random() * 10) - 5;
-    viewCountEl.innerText = "مشاهدة: " + viewers;
-}, 5000);
-
-// تبديل الجودة (شكل فقط)
-function changeQuality(q) {
-    document.querySelectorAll('.hd-pill').forEach(p => p.classList.remove('active'));
-    event.target.classList.add('active');
-    // هنا يمكن إضافة كود تغيير الرابط الفعلي للجودة
-}
-
-// تشغيل القناة الأولى عند الفتح
-loadMatch();
-
-// إعلان Pop-under عند أول لمسة
-document.body.addEventListener('click', function() {
-    if (!window.adsDone) {
-        window.open("https://omg10.com/4/10241472", "_blank");
-        window.adsDone = true;
-    }
-}, { once: true });
+    // إعلان Pop-under عند أول نقرة
+    document.body.addEventListener('click', function() {
+        if (!window.adsOnce) {
+            window.open("https://omg10.com/4/10241472", "_blank");
+            window.adsOnce = true;
+        }
+    }, { once: true });
 </script>
 
 </body>
