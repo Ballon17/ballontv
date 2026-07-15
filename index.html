@@ -2,243 +2,209 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | إنجلترا ضد الأرجنتين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BALLONTV | البث الاحترافي الأسرع</title>
     
-    <!-- محركات Clappr والإضافات -->
+    <!-- تحميل المكتبات بشكل متزامن لتحسين السرعة -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/clappr/dash-shaka-playback@latest/dist/dash-shaka-playback.js"></script>
-    <script src="https://cdn.jsdelivr.net/clappr.chromecast-plugin/latest/clappr-chromecast-plugin.js"></script>
 
     <style>
         :root {
-            --primary: #0d47a1; /* أزرق داكن */
-            --accent: #ffca28;  /* ذهبي ساطع */
-            --bg: #050a12;
-            --card-bg: #101826;
-            --text: #ffffff;
-            --active-server: #e53935; /* أحمر للسيرفر النشط */
+            --main: #0a111f; --accent: #ffd700; --card: #162033; --btn: #1d4ed8; --live: #ef4444;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; }
+        body { background: var(--main); color:#fff; font-family: system-ui, -apple-system, sans-serif; overflow-x:hidden; }
+
+        /* Header */
+        header { 
+            background:#000; padding:12px 15px; display:flex; justify-content:space-between; 
+            align-items:center; border-bottom:1px solid #333; position:sticky; top:0; z-index:100;
+        }
+        .logo { font-size:20px; font-weight:900; color:var(--accent); }
+        .logo span { color:#fff; }
+
+        /* Player */
+        .player-box { width:100%; aspect-ratio:16/9; background:#000; box-shadow:0 4px 15px rgba(0,0,0,0.5); }
+        #player { width:100% !important; height:100% !important; }
+
+        /* Ads Area */
+        .ad-slot { 
+            background: #111; margin:10px; padding:10px; border:1px dashed #444; 
+            text-align:center; border-radius:8px; font-size:12px;
+        }
+        .ad-link { color:var(--accent); text-decoration:none; font-weight:bold; display:block; }
+
+        /* Servers */
+        .server-container { background:#0f172a; padding:10px; border-bottom:1px solid #1e293b; }
+        .server-list { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+        .server-list::-webkit-scrollbar { display:none; }
+        .srv-btn { 
+            background:var(--btn); color:#fff; padding:8px 16px; border-radius:5px; 
+            cursor:pointer; white-space:nowrap; font-size:13px; font-weight:600; border:none;
+        }
+        .srv-btn.active { background:var(--live); box-shadow:0 0 8px var(--live); }
+
+        /* Content */
+        .container { padding:12px; }
+        .title { font-size:16px; color:var(--accent); margin:15px 0 10px; padding-right:8px; border-right:3px solid var(--accent); }
+
+        /* England Match Banner */
+        .match-card {
+            background: linear-gradient(45deg, #1e3a8a, #1e40af);
+            border-radius:12px; padding:20px; text-align:center; border:1px solid var(--accent);
+            margin-bottom:20px; cursor:pointer; position:relative; overflow:hidden;
+        }
+        .match-card::before { content:'LIVE'; position:absolute; top:10px; left:10px; background:red; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; }
+        .teams { display:flex; align-items:center; justify-content:center; gap:15px; }
+        .flag { font-size:35px; }
+        .vs { font-weight:900; color:var(--accent); font-size:20px; }
+
+        /* Channels Grid */
+        .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px; }
+        .ch-card { 
+            background:var(--card); padding:12px 5px; border-radius:8px; text-align:center; 
+            cursor:pointer; border:1px solid #222; transition:0.2s;
+        }
+        .ch-card:active { transform:scale(0.95); }
+        .ch-card strong { font-size:13px; display:block; }
+        .ch-card span { font-size:9px; color:#999; }
+
+        /* Floating Ad Button */
+        .float-ad {
+            position:fixed; bottom:20px; left:20px; background:var(--live); color:#fff;
+            padding:10px 15px; border-radius:50px; font-weight:bold; font-size:12px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:999; text-decoration:none;
         }
 
-        * { padding: 0; margin: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; list-style: none; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
-
-        header {
-            background: var(--primary); padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--accent); position: sticky; top: 0; z-index: 1000;
-        }
-        .logo { font-size: 26px; font-weight: 900; color: var(--accent); }
-        .logo span { color: #fff; }
-
-        /* المشغل */
-        .player-wrapper {
-            width: 100%; background: #000; aspect-ratio: 16/9; max-height: 65vh;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
-        #player { width: 100% !important; height: 100% !important; }
-
-        /* السيرفرات */
-        .servers-section { background: #0a121e; padding: 15px; border-bottom: 1px solid #1e293b; }
-        .servers-title { font-size: 14px; color: var(--accent); margin-bottom: 10px; font-weight: bold; }
-        .servers-grid { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0; }
-        .btn-server {
-            background: var(--primary); color: #fff; padding: 10px 18px; border-radius: 5px;
-            cursor: pointer; white-space: nowrap; font-weight: bold; font-size: 14px; transition: 0.3s;
-        }
-        .btn-server.active { background: var(--active-server); border: 1px solid var(--accent); }
-
-        .container { padding: 15px; max-width: 1000px; margin: auto; }
-
-        /* بانر المباراة الكبرى */
-        .match-banner {
-            background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
-            border-radius: 15px; padding: 20px; margin: 20px 0;
-            border: 2px solid var(--accent); text-align: center;
-            box-shadow: 0 0 20px rgba(255, 202, 40, 0.2);
-        }
-        .match-title { color: var(--accent); font-size: 14px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; }
-        .match-teams { display: flex; align-items: center; justify-content: center; gap: 20px; }
-        .m-team { flex: 1; text-align: center; }
-        .m-flag { font-size: 40px; display: block; margin-bottom: 5px; }
-        .m-name { font-size: 18px; font-weight: bold; }
-        .m-vs { font-size: 24px; font-weight: 900; color: var(--accent); }
-
-        /* الأقسام */
-        .sec-title {
-            font-size: 18px; color: var(--accent); margin: 30px 0 15px;
-            border-right: 5px solid var(--accent); padding-right: 12px;
-        }
-        .channels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-        .channel-card {
-            background: var(--card-bg); border-radius: 10px; padding: 15px;
-            text-align: center; cursor: pointer; border: 1px solid #1e293b; transition: 0.3s;
-        }
-        .channel-card:hover { border-color: var(--accent); background: #16243d; transform: translateY(-3px); }
-        .channel-card strong { display: block; font-size: 14px; margin-bottom: 5px; }
-        .channel-card span { font-size: 10px; color: #888; }
-
-        footer { text-align: center; padding: 30px; color: #444; font-size: 12px; }
-
-        @media (max-width: 600px) {
-            .match-teams { gap: 10px; }
-            .m-name { font-size: 14px; }
-        }
+        footer { text-align:center; padding:20px; font-size:11px; color:#555; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">BALLON<span>TV</span></div>
-    <div style="font-size: 12px; font-weight: bold; color: var(--accent);">بث مباشر احترافي</div>
+    <div id="status" style="font-size:11px; color:#4ade80;">● متصل</div>
 </header>
 
-<!-- قسم المشغل -->
-<div class="player-wrapper">
+<div class="player-box">
     <div id="player"></div>
 </div>
 
-<!-- السيرفرات -->
-<div class="servers-section">
-    <div class="servers-title" id="current-channel-name">جاري التحميل...</div>
-    <div class="servers-grid" id="server-list"></div>
+<!-- مساحة إعلانية 1 (رابطك الأول) -->
+<div class="ad-slot">
+    <span>إعلان:</span>
+    <a href="https://omg10.com/4/10270118" target="_blank" class="ad-link">تحميل تطبيق المشاهدة بجودة 4K اضغط هنا</a>
+</div>
+
+<div class="server-container">
+    <div class="server-list" id="srv-list"></div>
 </div>
 
 <div class="container">
-    
-    <!-- مباراة القمة -->
-    <div class="match-banner" onclick="selectChannel(0)">
-        <div class="match-title">مباراة اليوم - بث مباشر</div>
-        <div class="match-teams">
-            <div class="m-team">
-                <span class="m-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-                <div class="m-name">إنجلترا</div>
-            </div>
-            <div class="m-vs">VS</div>
-            <div class="m-team">
-                <span class="m-flag">🇦🇷</span>
-                <div class="m-name">الأرجنتين</div>
-            </div>
+
+    <!-- مباراة إنجلترا والأرجنتين -->
+    <div class="match-card" onclick="playChannel(0)">
+        <div class="teams">
+            <div><span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><p>إنجلترا</p></div>
+            <div class="vs">VS</div>
+            <div><span class="flag">🇦🇷</span><p>الأرجنتين</p></div>
         </div>
-        <div style="margin-top:15px; font-size:12px; color:#fff; background:rgba(0,0,0,0.3); padding:5px; border-radius:5px;">اضغط هنا لتشغيل مباراة إنجلترا</div>
+        <p style="font-size:11px; margin-top:10px; opacity:0.8;">اضغط هنا لبدء البث المباشر</p>
     </div>
 
-    <!-- قنوات beIN MAX -->
-    <h2 class="sec-title">قنوات beIN MAX</h2>
-    <div class="channels-grid">
-        <div class="channel-card" onclick="selectChannel(1)">
-            <strong>beIN MAX 1</strong>
-            <span>4K / Ultra HD</span>
-        </div>
-        <div class="channel-card" onclick="selectChannel(2)">
-            <strong>beIN MAX 2</strong>
-            <span>Full HD</span>
-        </div>
+    <!-- مساحة إعلانية 2 (رابطك الثاني) -->
+    <div class="ad-slot">
+        <a href="https://omg10.com/4/10185036" target="_blank" class="ad-link">سيرفر احتياطي سريع جداً - اضغط هنا</a>
     </div>
 
-    <!-- قنوات أجنبية -->
-    <h2 class="sec-title">قنوات أجنبية (International)</h2>
-    <div class="channels-grid">
-        <div class="channel-card" onclick="selectChannel(3)">
-            <strong>Sky Sports Main</strong>
-            <span>English Commentary</span>
-        </div>
-        <div class="channel-card" onclick="selectChannel(4)">
-            <strong>BT Sport 1</strong>
-            <span>Premium Sports</span>
-        </div>
+    <h2 class="title">قنوات beIN MAX</h2>
+    <div class="grid">
+        <div class="ch-card" onclick="playChannel(1)"><strong>beIN MAX 1</strong><span>Full HD</span></div>
+        <div class="ch-card" onclick="playChannel(2)"><strong>beIN MAX 2</strong><span>Full HD</span></div>
+    </div>
+
+    <!-- مساحة إعلانية 3 (رابطك الثالث) -->
+    <div class="ad-slot">
+        <a href="https://omg10.com/4/9093521" target="_blank" class="ad-link">شاهد بدون تقطيع (سيرفر خارجي)</a>
+    </div>
+
+    <h2 class="title">قنوات أجنبية</h2>
+    <div class="grid">
+        <div class="ch-card" onclick="playChannel(3)"><strong>Sky Sports</strong><span>English</span></div>
+        <div class="ch-card" onclick="playChannel(4)"><strong>BT Sport</strong><span>English</span></div>
+    </div>
+
+    <!-- إعلان إضافي (رابطك الرابع) -->
+    <div style="margin-top:20px;">
+        <a href="https://omg10.com/4/9047517" target="_blank" style="display:block; background:#ffd700; color:#000; text-align:center; padding:10px; border-radius:5px; font-weight:bold; text-decoration:none;">🎁 مسابقة توقع النتائج واربح جواهر</a>
     </div>
 
 </div>
 
-<footer>
-    <p>BALLONTV &copy; 2024 - المشغل الاحترافي Clappr</p>
-</footer>
+<!-- زر عائم (رابطك الخامس) -->
+<a href="https://omg10.com/4/10241472" target="_blank" class="float-ad">🔥 سيرفر VIP</a>
+
+<footer>BALLONTV - مشغل خفيف وسريع</footer>
 
 <script>
-    // 1. قاعدة البيانات (المباراة + القنوات)
-    const channels = [
-        {
-            name: "إنجلترا ضد الأرجنتين (مباشر)",
-            servers: [
-                { title: "سيرفر 1 (Multi Quality)", url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" },
-                { title: "سيرفر 2 (HD)", url: "https://bitdash-a.akamaihd.net/content/atv-ad-injection/main.m3u8" },
-                { title: "سيرفر 3 (SD) إنترنت ضعيف", url: "https://mtocz.com/hls/stream.m3u8" }
-            ]
-        },
-        {
-            name: "beIN Sports MAX 1",
-            servers: [
-                { title: "سيرفر رئيسي", url: "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd" },
-                { title: "سيرفر احتياطي", url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }
-            ]
-        },
-        {
-            name: "beIN Sports MAX 2",
-            servers: [
-                { title: "سيرفر مباشر", url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }
-            ]
-        },
-        {
-            name: "Sky Sports Main Event",
-            servers: [
-                { title: "Server 1 (UK)", url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }
-            ]
-        },
-        {
-            name: "BT Sport 1 HD",
-            servers: [
-                { title: "Main Server", url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }
-            ]
-        }
+    // بيانات القنوات
+    const db = [
+        { name: "إنجلترا × الأرجنتين", srv: [
+            { t: "سيرفر 1", u: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" },
+            { t: "سيرفر 2", u: "https://bitdash-a.akamaihd.net/content/atv-ad-injection/main.m3u8" }
+        ]},
+        { name: "beIN MAX 1", srv: [{ t: "سيرفر أساسي", u: "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd" }]},
+        { name: "beIN MAX 2", srv: [{ t: "سيرفر أساسي", u: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }]},
+        { name: "Sky Sports", srv: [{ t: "Server 1", u: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }]},
+        { name: "BT Sport", srv: [{ t: "Server 1", u: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" }]}
     ];
 
-    // 2. إعداد المشغل
-    var player = new Clappr.Player({
-        source: channels[0].servers[0].url,
+    // إعداد المشغل
+    let player = new Clappr.Player({
         parentId: "#player",
-        plugins: [LevelSelector, DashShakaPlayback, ChromecastPlugin],
-        width: '100%',
-        height: '100%',
+        width: '100%', height: '100%',
         autoPlay: false,
-        mediacontrol: {seekbar: "#ffca28", buttons: "#ffca28"},
+        plugins: [LevelSelector, DashShakaPlayback],
         levelSelectorConfig: { title: 'الجودة', labels: { 2: '720p', 1: '480p', 0: '360p' } },
-        chromecast: { appId: '9DFB77C0', contentType: 'video/mp4' }
     });
 
-    // 3. وظيفة اختيار القناة
-    function selectChannel(index) {
-        const ch = channels[index];
-        document.getElementById('current-channel-name').innerText = ch.name;
+    function playChannel(index) {
+        const ch = db[index];
+        const list = document.getElementById('srv-list');
+        list.innerHTML = '';
         
-        const serverList = document.getElementById('server-list');
-        serverList.innerHTML = '';
-        
-        ch.servers.forEach((srv, sIdx) => {
-            const btn = document.createElement('div');
-            btn.className = `btn-server ${sIdx === 0 ? 'active' : ''}`;
-            btn.innerText = srv.title;
+        ch.srv.forEach((s, i) => {
+            const btn = document.createElement('button');
+            btn.className = `srv-btn ${i === 0 ? 'active' : ''}`;
+            btn.innerText = s.t;
             btn.onclick = () => {
-                changeServer(srv.url, btn);
+                document.querySelectorAll('.srv-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                player.configure({ source: s.u });
+                player.play();
+                // فتح إعلان عشوائي عند تغيير السيرفر لزيادة الربح
+                if(Math.random() > 0.5) window.open("https://omg10.com/4/10270118", "_blank");
             };
-            serverList.appendChild(btn);
+            list.appendChild(btn);
         });
 
-        changeServer(ch.servers[0].url, serverList.firstChild);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // 4. وظيفة تغيير السيرفر
-    function changeServer(url, btn) {
-        player.configure({ source: url });
+        player.configure({ source: ch.srv[0].u });
         player.play();
-        document.querySelectorAll('.btn-server').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    // تشغيل القناة الأولى عند الفتح
-    selectChannel(0);
+    // تفعيل أول قناة تلقائياً
+    playChannel(0);
+
+    // كود لفتح إعلان عند أول ضغطة في الصفحة (Pop-under) لزيادة الربح
+    document.body.addEventListener('click', function() {
+        if (!window.adsDone) {
+            window.open("https://omg10.com/4/10241472", "_blank");
+            window.adsDone = true;
+        }
+    }, { once: true });
 </script>
 
 </body>
