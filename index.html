@@ -3,198 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>BALLONTV - بث مباشر للمباريات</title>
+    <title>BALLONTV | البث المباشر الاحترافي</title>
     
-    <!-- HLS.js لخدمة البث المباشر -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
-    
+    <!-- مكتبات المشغل Clappr والإضافات -->
+    <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/clappr/dash-shaka-playback@latest/dist/dash-shaka-playback.js"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.chromecast-plugin/latest/clappr-chromecast-plugin.js"></script>
+
     <style>
         :root {
-            --primary: #1a237e; /* أزرق داكن */
+            --primary: #1a237e; /* أزرق BALLONTV */
             --accent: #ffd700;  /* ذهبي */
-            --bg: #0a0a0a;
-            --card-bg: #161616;
+            --bg: #050505;
+            --card-bg: #121212;
             --text: #ffffff;
-            --muted: #a0a0a0;
+            --secondary: #d32f2f; /* لون السيرفر النشط */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body { background: var(--bg); color: var(--text); padding-bottom: 70px; }
+        * { padding: 0; margin: 0; box-sizing: border-box; list-style: none; text-decoration: none; }
+        body { 
+            background: var(--bg); 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            color: var(--text);
+            overflow-x: hidden;
+        }
 
         /* الهيدر */
         header {
             background: var(--primary);
-            padding: 15px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1001;
         }
-
-        .logo { font-size: 24px; font-weight: 900; color: var(--accent); letter-spacing: 1px; }
+        .logo { font-size: 22px; font-weight: 900; color: var(--accent); }
         .logo span { color: white; }
 
-        .live-badge {
-            background: red;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;} }
-
-        /* المشغل */
-        .player-container {
+        /* منطقة المشغل */
+        .player-section {
             width: 100%;
             background: #000;
-            aspect-ratio: 16/9;
             position: relative;
+            aspect-ratio: 16/9;
+            max-height: 70vh;
+        }
+        #player { width: 100% !important; height: 100% !important; }
+
+        /* قائمة السيرفرات (تحت المشغل مباشرة) */
+        .server-menu {
+            display: flex; gap: 8px; padding: 10px;
+            background: #111; overflow-x: auto;
+            border-bottom: 1px solid #333;
+        }
+        .server-link {
+            background: var(--primary); color: #fff;
+            padding: 8px 15px; border-radius: 5px;
+            cursor: pointer; font-weight: bold; white-space: nowrap; font-size: 14px;
+            transition: 0.3s;
+        }
+        .server-link.active { background: var(--secondary); border: 1px solid var(--accent); }
+
+        /* الأقسام والمحتوى */
+        .main-content { padding: 15px; padding-bottom: 80px; }
+        .section-title { 
+            color: var(--accent); border-right: 4px solid var(--accent); 
+            padding-right: 10px; margin: 20px 0; font-size: 18px; 
         }
 
-        video { width: 100%; height: 100%; }
-
-        /* القائمة السفلية */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: var(--card-bg);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #333;
+        /* شبكة القنوات */
+        .channels-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
         }
-
-        .nav-item {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
-
-        /* الأقسام */
-        .page { display: none; padding: 15px; }
-        .page.active { display: block; }
-
-        /* كروت المباريات */
-        .match-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #222;
-        }
-
-        .match-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-        .match-teams { display: flex; align-items: center; justify-content: space-around; }
-        .team { text-align: center; flex: 1; }
-        .team img { width: 40px; height: 40px; object-fit: contain; }
-        .score { font-size: 24px; font-weight: bold; flex: 1; text-align: center; }
-
-        /* قائمة القنوات */
-        .channels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .channel-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid #333;
-            cursor: pointer;
+            background: var(--card-bg); padding: 15px; border-radius: 10px;
+            text-align: center; border: 1px solid #222; cursor: pointer;
+            transition: 0.3s;
         }
-        .channel-card:hover { border-color: var(--accent); }
+        .channel-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .channel-card img { width: 50px; height: 50px; margin-bottom: 10px; }
+
+        /* جدول المباريات */
+        .match-card {
+            background: var(--card-bg); border-radius: 12px; padding: 15px;
+            margin-bottom: 15px; border-right: 5px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .team { text-align: center; flex: 1; font-size: 14px; }
+        .score-info { text-align: center; flex: 1; }
+        .score { font-size: 20px; font-weight: bold; color: var(--accent); }
+        .time { font-size: 12px; color: #888; }
+
+        /* القائمة السفلية (Tabs) */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%;
+            background: var(--primary); display: flex;
+            justify-content: space-around; padding: 10px 0;
+            border-top: 2px solid var(--accent); z-index: 1000;
+        }
+        .nav-btn {
+            color: #ccc; text-align: center; font-size: 12px; cursor: pointer;
+        }
+        .nav-btn.active { color: var(--accent); font-weight: bold; }
+        .nav-btn svg { display: block; margin: 0 auto 5px; width: 24px; height: 24px; fill: currentColor; }
+
+        /* إخفاء الأقسام */
+        .content-page { display: none; animation: fadeIn 0.5s; }
+        .content-page.active { display: block; }
+
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+
+        /* نافذة المشاركة */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-content { 
+            background: #222; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; 
+        }
+        textarea { width: 100%; height: 80px; background: #000; color: #0f0; padding: 10px; border: 1px solid #444; resize: none; }
+
+        @media (max-width: 600px) {
+            .channels-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">BALLON<span>TV</span></div>
-    <div class="live-badge">مباشر</div>
+    <div onclick="toggleModal()" style="cursor:pointer">
+        <svg width="24" fill="white" viewBox="0 0 24 24"><path d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.14,18.3C15.09,18.53 15.1,18.75 15.1,19A3,3 0 0,0 18.1,22A3,3 0 0,0 21.1,19A3,3 0 0,0 18.1,16M18,4A1,1 0 0,1 19,5A1,1 0 0,1 18,6A1,1 0 0,1 17,5A1,1 0 0,1 18,4M6,13A1,1 0 0,1 5,12A1,1 0 0,1 6,11A1,1 0 0,1 7,12A1,1 0 0,1 6,13M18,20A1,1 0 0,1 17,19A1,1 0 0,1 18,18A1,1 0 0,1 19,19A1,1 0 0,1 18,20Z"/></svg>
+    </div>
 </header>
 
-<div id="home" class="page active">
-    <h3 style="margin-bottom:15px;">مباريات اليوم</h3>
-    <div id="matches-list">
-        <div class="match-card">
-            <div class="match-header"><span>كأس العالم 2026</span> <span>10:00 م</span></div>
-            <div class="match-teams">
-                <div class="team"><div>🇸🇦</div><p>السعودية</p></div>
-                <div class="score">0 - 0</div>
-                <div class="team"><div>🇦🇷</div><p>الأرجنتين</p></div>
+<!-- قسم المشغل -->
+<div class="player-section">
+    <div id="player"></div>
+</div>
+
+<!-- قائمة السيرفرات (تتحدث ديناميكياً) -->
+<div class="server-menu" id="server-list">
+    <div class="server-link active">سيرفر مباشر</div>
+</div>
+
+<div class="main-content">
+    
+    <!-- صفحة المباريات -->
+    <div id="page-home" class="content-page active">
+        <h3 class="section-title">مباريات اليوم</h3>
+        <div id="matches-container">
+            <!-- مثال لمباراة -->
+            <div class="match-card">
+                <div class="team">🇸🇦<br>السعودية</div>
+                <div class="score-info">
+                    <div class="time">22:00</div>
+                    <div class="score">VS</div>
+                    <div class="time">كأس العالم</div>
+                </div>
+                <div class="team">🇦🇷<br>الأرجنتين</div>
             </div>
         </div>
     </div>
+
+    <!-- صفحة القنوات -->
+    <div id="page-channels" class="content-page">
+        <h3 class="section-title">القنوات الرياضية</h3>
+        <div class="channels-grid">
+            <div class="channel-card" onclick="changeChannel('beIN 1', 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8')">
+                <strong>beIN 1</strong>
+                <div style="font-size:10px; color:var(--accent)">4K</div>
+            </div>
+            <div class="channel-card" onclick="changeChannel('SSC Sport', 'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd')">
+                <strong>SSC Sport</strong>
+                <div style="font-size:10px; color:var(--accent)">HD</div>
+            </div>
+            <!-- اضف المزيد هنا -->
+        </div>
+    </div>
+
 </div>
 
-<div id="live" class="page">
-    <div class="player-container">
-        <video id="video" controls></video>
-    </div>
-    <h3 style="margin: 20px 0 10px;">اختر القناة</h3>
-    <div class="channels-grid" id="channels-list">
-        <!-- القنوات سيتم تحميلها هنا -->
-    </div>
-</div>
-
+<!-- القائمة السفلية -->
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home', this)">🏠<span>الرئيسية</span></div>
-    <div class="nav-item" onclick="showPage('live', this)">📺<span>بث مباشر</span></div>
-    <div class="nav-item" onclick="window.open('https://t.me/your_telegram', '_blank')">💬<span>تلجرام</span></div>
+    <div class="nav-btn active" onclick="switchTab('page-home', this)">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        الرئيسية
+    </div>
+    <div class="nav-btn" onclick="switchTab('page-channels', this)">
+        <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+        القنوات
+    </div>
+    <div class="nav-btn" onclick="window.open('https://t.me/your_telegram')">
+        <svg viewBox="0 0 24 24"><path d="M20 2L2 10l9 2 2 9 7-19z"/></svg>
+        تلجرام
+    </div>
 </nav>
 
+<!-- مودال التضمين -->
+<div class="modal" id="shareModal">
+    <div class="modal-content">
+        <h4 style="margin-bottom:10px">انسخ كود التضمين</h4>
+        <textarea id="embedCode" readonly><iframe src="https://yoursite.com" width="100%" height="500px" frameborder="0" allowfullscreen></iframe></textarea>
+        <button onclick="toggleModal()" style="margin-top:10px; padding:8px 20px; background:var(--accent); border:0; border-radius:5px; cursor:pointer">إغلاق</button>
+    </div>
+</div>
+
 <script>
-    // التنقل بين الصفحات
-    function showPage(pageId, element) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        element.classList.add('active');
+    // 1. إعداد المشغل Clappr
+    var player = new Clappr.Player({
+        source: 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8', // رابط البداية
+        parentId: "#player",
+        plugins: [LevelSelector, DashShakaPlayback, ChromecastPlugin],
+        width: '100%',
+        height: '100%',
+        autoPlay: false,
+        mediacontrol: {seekbar: "#ffd700", buttons: "#ffd700"},
+        levelSelectorConfig: { title: 'الجودة', labels: { 2: '720p', 1: '480p', 0: '360p' } },
+        chromecast: { appId: '9DFB77C0', contentType: 'video/mp4' }
+    });
+
+    // 2. وظيفة تبويب الصفحات (Tabs)
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+        window.scrollTo(0, 0);
     }
 
-    // تشغيل البث
-    function playStream(url) {
-        const video = document.getElementById('video');
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-            video.addEventListener('loadedmetadata', () => video.play());
-        }
-    }
-
-    // تحميل القنوات من ملف JSON
-    async function loadChannels() {
-        const response = await fetch('channels.json');
-        const data = await response.json();
-        const list = document.getElementById('channels-list');
+    // 3. وظيفة تغيير القناة والسيرفرات
+    function changeChannel(name, url) {
+        player.configure({ source: url });
+        player.play();
         
-        data.channels.forEach(ch => {
-            const div = document.createElement('div');
-            div.className = 'channel-card';
-            div.innerHTML = `<strong>${ch.name}</strong><br><small>${ch.quality}</small>`;
-            div.onclick = () => {
-                playStream(ch.url);
-                window.scrollTo(0, 0);
-            };
-            list.appendChild(div);
-        });
+        // تحديث السيرفرات (كمثال نضع سيرفر واحد للقناة المختارة)
+        const serverList = document.getElementById('server-list');
+        serverList.innerHTML = `
+            <div class="server-link active" onclick="loadSource('${url}', this)">سيرفر مباشر</div>
+            <div class="server-link" onclick="loadSource('${url}', this)">سيرفر احتياطي</div>
+        `;
+        
+        // الصعود للمشغل عند اختيار قناة
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    loadChannels();
+    function loadSource(url, btn) {
+        player.configure({ source: url });
+        player.play();
+        document.querySelectorAll('.server-link').forEach(l => l.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // 4. نافذة المشاركة
+    function toggleModal() {
+        const m = document.getElementById('shareModal');
+        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+    }
 </script>
 
 </body>
