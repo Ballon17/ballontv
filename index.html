@@ -1,1 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BALLONTV | البث المباشر الاحترافي</title>
+    
+    <!-- محركات Clappr والإضافات -->
+    <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/clappr/dash-shaka-playback@latest/dist/dash-shaka-playback.js"></script>
+    <script src="https://cdn.jsdelivr.net/clappr.chromecast-plugin/latest/clappr-chromecast-plugin.js"></script>
 
+    <style>
+        :root {
+            --primary: #1a237e; /* أزرق ملكي */
+            --accent: #ffd700;  /* ذهبي */
+            --bg: #080d16;
+            --card-bg: #111b2d;
+            --text: #ffffff;
+            --active-server: #d32f2f;
+        }
+
+        * { padding: 0; margin: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; list-style: none; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6;
+        }
+
+        /* الهيدر */
+        header {
+            background: var(--primary);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .logo { font-size: 24px; font-weight: 900; color: var(--accent); text-transform: uppercase; }
+        .logo span { color: #fff; }
+
+        /* منطقة المشغل */
+        .player-wrapper {
+            width: 100%;
+            background: #000;
+            aspect-ratio: 16/9;
+            max-height: 60vh;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        #player { width: 100% !important; height: 100% !important; }
+
+        /* منطقة السيرفرات */
+        .servers-section {
+            background: #0f172a;
+            padding: 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .servers-label {
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: block;
+            font-weight: bold;
+        }
+        .servers-grid {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .servers-grid::-webkit-scrollbar { height: 4px; }
+        .servers-grid::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .btn-server {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .btn-server.active {
+            background: var(--active-server);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
+        }
+
+        /* المحتوى الرئيسي */
+        .container { padding: 20px; }
+        .sec-title {
+            font-size: 20px;
+            color: var(--accent);
+            margin: 25px 0 15px;
+            border-right: 5px solid var(--accent);
+            padding-right: 12px;
+        }
+
+        /* جدول المباريات */
+        .matches-list { display: flex; flex-direction: column; gap: 15px; }
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #1e293b;
+            transition: 0.3s;
+        }
+        .match-card:hover { border-color: var(--accent); background: #16243d; }
+        .team { text-align: center; flex: 1; }
+        .team-icon { font-size: 30px; margin-bottom: 5px; display: block; }
+        .match-info { text-align: center; flex: 1; }
+        .m-time { font-size: 13px; color: #94a3b8; }
+        .m-score { font-size: 22px; font-weight: bold; color: var(--accent); margin: 5px 0; }
+        .m-league { font-size: 11px; background: var(--primary); padding: 2px 8px; border-radius: 4px; }
+
+        /* شبكة القنوات */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+        .channel-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #1e293b;
+            transition: 0.3s;
+        }
+        .channel-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            background: var(--primary);
+        }
+        .channel-item strong { display: block; font-size: 15px; margin-bottom: 5px; }
+        .channel-item span { font-size: 10px; color: var(--accent); font-weight: bold; }
+
+        /* فوتر */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 13px;
+            border-top: 1px solid #1e293b;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .channel-item { padding: 15px 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">BALLON<span>TV</span></div>
+    <div style="background: red; padding: 2px 10px; border-radius: 5px; font-size: 12px; font-weight: bold;">LIVE</div>
+</header>
+
+<!-- المشغل -->
+<div class="player-wrapper">
+    <div id="player"></div>
+</div>
+
+<!-- قائمة السيرفرات المتغيرة -->
+<div class="servers-section">
+    <span class="servers-label">اختر السيرفر المناسب لسرعة إنترنتك:</span>
+    <div class="servers-grid" id="server-list">
+        <!-- يتم تحميل السيرفرات هنا تلقائياً عند اختيار قناة -->
+        <div class="btn-server active">سيرفر 1 (HLS)</div>
+        <div class="btn-server">سيرفر 2 (DASH)</div>
+        <div class="btn-server">سيرفر 3 (SD)</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <!-- قسم المباريات -->
+    <h2 class="sec-title">مباريات اليوم</h2>
+    <div class="matches-list">
+        <!-- مباراة 1 -->
+        <div class="match-card">
+            <div class="team"><span class="team-icon">🇸🇦</span>النصر</div>
+            <div class="match-info">
+                <div class="m-time">20:00</div>
+                <div class="m-score">VS</div>
+                <div class="m-league">الدوري السعودي</div>
+            </div>
+            <div class="team"><span class="team-icon">🇸🇦</span>الهلال</div>
+        </div>
+        <!-- مباراة 2 -->
+        <div class="match-card">
+            <div class="team"><span class="team-icon">🇪🇸</span>ريال مدريد</div>
+            <div class="match-info">
+                <div class="m-time">22:00</div>
+                <div class="m-score">VS</div>
+                <div class="m-league">الدوري الإسباني</div>
+            </div>
+            <div class="team"><span class="team-icon">🇪🇸</span>برشلونة</div>
+        </div>
+    </div>
+
+    <!-- قسم القنوات -->
+    <h2 class="sec-title">القنوات الرياضية</h2>
+    <div class="channels-grid" id="channels-grid">
+        <!-- القنوات سيتم تحميلها من الجافاسكريبت -->
+    </div>
+
+</div>
+
+<footer>
+    <p>جميع الحقوق محفوظة لـ BALLONTV &copy; 2024</p>
+    <p>برمجة Alba Player Pro</p>
+</footer>
+
+<script>
+    // 1. قاعدة بيانات القنوات وسيرفراتها
+    const channelsData = [
+        {
+            name: "beIN Sports HD1",
+            quality: "4K / HD",
+            servers: [
+                { title: "سيرفر 1 (4K)", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" },
+                { title: "سيرفر 2 (HD)", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" },
+                { title: "سيرفر 3 (SD)", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" }
+            ]
+        },
+        {
+            name: "SSC Sports HD",
+            quality: "HD / SD",
+            servers: [
+                { title: "سيرفر رئيسي", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" },
+                { title: "سيرفر احتياطي", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" }
+            ]
+        },
+        {
+            name: "beIN Sports HD2",
+            quality: "HD",
+            servers: [
+                { title: "سيرفر 1", url: "https://netfly-asia217.autiv.in/bein_max_1/index.mpd" }
+            ]
+        }
+        // يمكنك إضافة المزيد من القنوات هنا بنفس التنسيق
+    ];
+
+    // 2. إعداد المشغل Clappr
+    var player = new Clappr.Player({
+        source: channelsData[0].servers[0].url, // القناة الأولى افتراضياً
+        parentId: "#player",
+        plugins: [LevelSelector, DashShakaPlayback, ChromecastPlugin],
+        width: '100%',
+        height: '100%',
+        autoPlay: false,
+        mediacontrol: {seekbar: "#ffd700", buttons: "#ffd700"},
+        levelSelectorConfig: { title: 'الجودة', labels: { 2: '720p', 1: '480p', 0: '360p' } },
+        chromecast: { appId: '9DFB77C0', contentType: 'video/mp4' }
+    });
+
+    // 3. تحميل القنوات في الشبكة
+    function loadChannels() {
+        const grid = document.getElementById('channels-grid');
+        channelsData.forEach((ch, index) => {
+            const card = document.createElement('div');
+            card.className = 'channel-item';
+            card.innerHTML = `<strong>${ch.name}</strong><span>${ch.quality}</span>`;
+            card.onclick = () => selectChannel(index);
+            grid.appendChild(card);
+        });
+    }
+
+    // 4. وظيفة اختيار القناة وتحديث السيرفرات
+    function selectChannel(index) {
+        const channel = channelsData[index];
+        const serverList = document.getElementById('server-list');
+        
+        // تحديث أزرار السيرفرات
+        serverList.innerHTML = '';
+        channel.servers.forEach((srv, sIndex) => {
+            const btn = document.createElement('div');
+            btn.className = `btn-server ${sIndex === 0 ? 'active' : ''}`;
+            btn.innerText = srv.title;
+            btn.onclick = () => {
+                changeServer(srv.url, btn);
+            };
+            serverList.appendChild(btn);
+        });
+
+        // تشغيل السيرفر الأول للقناة المختار فورا
+        changeServer(channel.servers[0].url, serverList.firstChild);
+        
+        // الصعود للمشغل بسلاسة
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 5. وظيفة تغيير السيرفر
+    function changeServer(url, btnElement) {
+        player.configure({ source: url });
+        player.play();
+        
+        // تحديث شكل الزر النشط
+        document.querySelectorAll('.btn-server').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    // تشغيل القنوات عند فتح الصفحة
+    loadChannels();
+    selectChannel(0); // تفعيل أول قناة افتراضياً
+</script>
+
+</body>
+</html>
