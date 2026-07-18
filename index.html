@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | البث المباشر للمباريات</title>
+    <title>BALLONTV | فرنسا ضد إنجلترا - بث مباشر</title>
     
     <!-- مكتبة المشغل Clappr -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            --main_color: #931800; /* لون يلا شوت الأحمر */
+            --main_color: #931800; 
             --body_bg: #eceef2;
             --header_bg: #fff;
             --header_color: #222;
@@ -41,41 +41,37 @@
 
         .btn-mode { cursor: pointer; background: var(--main_color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; }
 
-        /* منطقة المشغل والسيرفرات */
         .player-area { background: #000; width: 100%; aspect-ratio: 16/9; }
         #player { width: 100% !important; height: 100% !important; }
 
         .video-serv { display: flex; overflow-x: auto; background: #1f2024; padding: 10px; gap: 10px; }
         .video-serv span { 
-            background: var(--main_color); color: white; padding: 6px 15px; 
+            background: var(--main_color); color: white; padding: 8px 18px; 
             border-radius: 4px; cursor: pointer; font-size: 14px; white-space: nowrap; 
+            border-bottom: 3px solid transparent;
         }
-        .video-serv span.active { background: #555; }
+        .video-serv span.active { background: #444; border-bottom: 3px solid #fff; }
 
-        /* المحتوى */
         .container { padding: 15px; max-width: 1000px; margin: auto; }
 
-        /* إعلان علوي */
         .ad-box { background: #fff; border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; text-align: center; border-radius: 8px; }
         .ad-box a { color: var(--main_color); font-weight: bold; font-size: 14px; }
 
-        /* بطاقة المباراة */
+        /* بطاقة المباراة المحدثة */
         .match-banner {
             background: #1c2733; border-radius: 8px; overflow: hidden; margin-bottom: 20px;
-            border: 1px solid var(--main_color);
+            border: 2px solid var(--main_color); cursor: pointer;
         }
-        .match-head { background: var(--main_color); color: white; padding: 8px; text-align: center; font-size: 14px; }
-        .match-teams { display: flex; align-items: center; justify-content: space-around; padding: 20px; color: white; }
-        .team { text-align: center; }
-        .flag { font-size: 40px; display: block; }
-        .vs { font-size: 24px; font-weight: bold; color: var(--main_color); }
+        .match-head { background: var(--main_color); color: white; padding: 8px; text-align: center; font-size: 14px; font-weight: bold; }
+        .match-teams { display: flex; align-items: center; justify-content: space-around; padding: 25px 10px; color: white; }
+        .team { text-align: center; width: 40%; }
+        .flag { font-size: 50px; display: block; margin-bottom: 5px; }
+        .team-name { font-size: 18px; font-weight: bold; }
+        .vs { font-size: 28px; font-weight: bold; color: var(--main_color); background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 5px; }
 
-        /* شبكة القنوات */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
         .ch-card { background: var(--card_bg); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #ddd; cursor: pointer; }
-        .ch-card strong { display: block; font-size: 14px; margin-bottom: 5px; }
 
-        /* زر تلجرام العائم */
         .floating-btn {
             position: fixed; bottom: 20px; left: 20px; background: #0088cc;
             color: white; padding: 10px 15px; border-radius: 50px; font-weight: bold; z-index: 1000;
@@ -96,78 +92,75 @@
     <div id="player"></div>
 </div>
 
-<!-- السيرفرات -->
+<!-- السيرفرات المتعددة -->
 <div class="video-serv" id="server-list">
-    <!-- السيرفرات تظهر هنا -->
+    <!-- السيرفرات ستظهر هنا تلقائياً -->
 </div>
 
 <div class="container">
 
-    <!-- إعلان 1 -->
     <div class="ad-box">
-        <a href="https://omg10.com/4/10270118" target="_blank">📲 تحميل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
+        <a href="https://omg10.com/4/10270118" target="_blank">📲 حمل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
     </div>
 
-    <!-- مباراة إنجلترا ضد الأرجنتين -->
+    <!-- بطاقة مباراة فرنسا وإنجلترا -->
     <div class="match-banner" onclick="loadChannel(0)">
-        <div class="match-head">بث مباشر | كأس العالم</div>
+        <div class="match-head">بث مباشر | قمة ربع النهائي</div>
         <div class="match-teams">
-            <div class="team"><span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>إنجلترا</div>
+            <div class="team">
+                <span class="flag">🇫🇷</span>
+                <div class="team-name">فرنسا</div>
+            </div>
             <div class="vs">VS</div>
-            <div class="team"><span class="flag">🇦🇷</span>الأرجنتين</div>
+            <div class="team">
+                <span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                <div class="team-name">إنجلترا</div>
+            </div>
         </div>
-        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">انقر هنا لبدء البث المباشر</div>
+        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">اختر السيرفر المناسب من الأعلى وابدأ المشاهدة</div>
     </div>
 
-    <!-- إعلان 2 -->
-    <div class="ad-box">
-        <a href="https://omg10.com/4/10185036" target="_blank">🚀 سيرفر VIP يدعم الإنترنت الضعيف - اضغط هنا</a>
-    </div>
-
-    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">قنوات beIN MAX</h3>
+    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">القنوات الناقلة</h3>
     <div class="grid">
-        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN MAX 1</strong><span>HD / 4K</span></div>
+        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN MAX 1</strong><span>4K Quality</span></div>
         <div class="ch-card" onclick="loadChannel(2)"><strong>beIN MAX 2</strong><span>Full HD</span></div>
-    </div>
-
-    <!-- إعلان 3 -->
-    <div class="ad-box" style="margin-top: 20px;">
-        <a href="https://omg10.com/4/9093521" target="_blank">📺 قنوات أجنبية وسيرفرات إضافية</a>
     </div>
 
 </div>
 
-<!-- زر عائم (إعلان 4) -->
 <a href="https://omg10.com/4/10241472" class="floating-btn" target="_blank">سيرفر احتياطي 🔥</a>
 
 <footer>BALLONTV &copy; 2024 - جميع الحقوق محفوظة</footer>
 
 <script>
-    // بيانات القنوات والسيرفرات
+    // بيانات القنوات والسيرفرات المتعددة لمباراة فرنسا وإنجلترا
     const db = [
         {
-            name: "إنجلترا ضد الأرجنتين",
+            name: "فرنسا ضد إنجلترا",
             servers: [
-                { title: "سيرفر 1", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_4.m3u8" },
-                { title: "سيرفر 2", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8" },
-                { title: "سيرفر 3", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
+                { title: "سيرفر 1 | رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" },
+                { title: "سيرفر 2 | متعدد الجودات", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_4.m3u8" },
+                { title: "سيرفر 3 | إنترنت ضعيف", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8" },
+                { title: "سيرفر 4 | YouTube", url: "https://tmaxapp.site/8wirwjs76erftg/bein1max.m3u8" },
+                { title: "سيرفر 5 | احتياطي 1", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_4.m3u8" },
+                { title: "سيرفر 6 | احتياطي 2", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
             ]
         },
         {
             name: "beIN MAX 1",
             servers: [
-                { title: "سيرفر رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
+                { title: "سيرفر HD", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
             ]
         },
         {
             name: "beIN MAX 2",
             servers: [
-                { title: "سيرفر رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
+                { title: "سيرفر HD", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
             ]
         }
     ];
 
-    // إعداد المشغل Clappr
+    // إعداد المشغل
     var player = new Clappr.Player({
         source: db[0].servers[0].url,
         parentId: "#player",
@@ -178,11 +171,11 @@
         mediacontrol: {seekbar: "#931800", buttons: "#931800"}
     });
 
-    // وظيفة تبديل القنوات
+    // وظيفة تبديل القنوات والسيرفرات
     function loadChannel(index) {
         const ch = db[index];
         const serverList = document.getElementById('server-list');
-        serverList.innerHTML = '';
+        serverList.innerHTML = ''; // مسح السيرفرات السابقة
         
         ch.servers.forEach((srv, i) => {
             const btn = document.createElement('span');
@@ -193,8 +186,8 @@
                 player.play();
                 document.querySelectorAll('.video-serv span').forEach(s => s.classList.remove('active'));
                 btn.classList.add('active');
-                // إعلان Pop-up عند تبديل السيرفر
-                if(Math.random() > 0.6) window.open("https://omg10.com/4/9047517", "_blank");
+                // إعلان Pop-up عشوائي عند التبديل
+                if(Math.random() > 0.7) window.open("https://omg10.com/4/9047517", "_blank");
             };
             serverList.appendChild(btn);
         });
@@ -204,12 +197,11 @@
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    // الوضع الليلي
     function toggleMode() {
         document.body.classList.toggle('Night');
     }
 
-    // تفعيل أول قناة
+    // تفعيل أول مباراة تلقائياً
     loadChannel(0);
 
     // إعلان Pop-under عند أول نقرة
