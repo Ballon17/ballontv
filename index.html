@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | فرنسا ضد إنجلترا - بث مباشر</title>
+    <title>BALLONTV | إسبانيا ضد الأرجنتين - بث مباشر</title>
     
     <!-- مكتبة المشغل Clappr -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
@@ -100,21 +100,21 @@
 <div class="container">
 
     <div class="ad-box">
-        <a href="https://omg10.com/4/10270118" target="_blank">📲 حمل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
+        <a href="https://omg10.com/4/10270118" target="_blank">📲 تحميل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
     </div>
 
-    <!-- بطاقة مباراة فرنسا وإنجلترا -->
+    <!-- بطاقة مباراة إسبانيا والأرجنتين -->
     <div class="match-banner" onclick="loadChannel(0)">
-        <div class="match-head">بث مباشر | قمة ربع النهائي</div>
+        <div class="match-head">بث مباشر | نهائي الفيناليسيما المرتقب</div>
         <div class="match-teams">
             <div class="team">
-                <span class="flag">🇫🇷</span>
-                <div class="team-name">فرنسا</div>
+                <span class="flag">🇪🇸</span>
+                <div class="team-name">إسبانيا</div>
             </div>
             <div class="vs">VS</div>
             <div class="team">
-                <span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-                <div class="team-name">إنجلترا</div>
+                <span class="flag">🇦🇷</span>
+                <div class="team-name">الأرجنتين</div>
             </div>
         </div>
         <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">اختر السيرفر المناسب من الأعلى وابدأ المشاهدة</div>
@@ -133,10 +133,10 @@
 <footer>BALLONTV &copy; 2024 - جميع الحقوق محفوظة</footer>
 
 <script>
-    // بيانات القنوات والسيرفرات المتعددة لمباراة فرنسا وإنجلترا
+    // بيانات القنوات والسيرفرات المتعددة لمباراة إسبانيا والأرجنتين
     const db = [
         {
-            name: "فرنسا ضد إنجلترا",
+            name: "إسبانيا ضد الأرجنتين",
             servers: [
                 { title: "سيرفر 1 | رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" },
                 { title: "سيرفر 2 | متعدد الجودات", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_4.m3u8" },
@@ -175,7 +175,7 @@
     function loadChannel(index) {
         const ch = db[index];
         const serverList = document.getElementById('server-list');
-        serverList.innerHTML = ''; // مسح السيرفرات السابقة
+        serverList.innerHTML = ''; 
         
         ch.servers.forEach((srv, i) => {
             const btn = document.createElement('span');
@@ -186,7 +186,6 @@
                 player.play();
                 document.querySelectorAll('.video-serv span').forEach(s => s.classList.remove('active'));
                 btn.classList.add('active');
-                // إعلان Pop-up عشوائي عند التبديل
                 if(Math.random() > 0.7) window.open("https://omg10.com/4/9047517", "_blank");
             };
             serverList.appendChild(btn);
@@ -201,10 +200,8 @@
         document.body.classList.toggle('Night');
     }
 
-    // تفعيل أول مباراة تلقائياً
     loadChannel(0);
 
-    // إعلان Pop-under عند أول نقرة
     document.body.addEventListener('click', function() {
         if (!window.adsOnce) {
             window.open("https://omg10.com/4/10241472", "_blank");
