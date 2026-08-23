@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | إسبانيا ضد الأرجنتين - بث مباشر</title>
+    <title>BALLONTV | إنتر ميامي ضد تورنتو - بث مباشر</title>
     
     <!-- مكتبة المشغل Clappr -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            --main_color: #931800; 
+            --main_color: #f03e9b; /* لون قميص إنتر ميامي الزهري */
             --body_bg: #eceef2;
             --header_bg: #fff;
             --header_color: #222;
@@ -19,10 +19,9 @@
             --text_color: #222;
         }
 
-        /* الوضع الليلي */
         .Night {
-            --body_bg: #121a23;
-            --header_bg: #263545;
+            --body_bg: #0f1216;
+            --header_bg: #1a1d23;
             --header_color: #fff;
             --card_bg: #1c2733;
             --text_color: #fff;
@@ -41,8 +40,9 @@
 
         .btn-mode { cursor: pointer; background: var(--main_color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; }
 
-        .player-area { background: #000; width: 100%; aspect-ratio: 16/9; }
-        #player { width: 100% !important; height: 100% !important; }
+        .player-area { background: #000; width: 100%; aspect-ratio: 16/9; position: relative; }
+        #player, #iframe-player { width: 100% !important; height: 100% !important; border: none; }
+        #iframe-player { display: none; }
 
         .video-serv { display: flex; overflow-x: auto; background: #1f2024; padding: 10px; gap: 10px; }
         .video-serv span { 
@@ -57,7 +57,6 @@
         .ad-box { background: #fff; border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; text-align: center; border-radius: 8px; }
         .ad-box a { color: var(--main_color); font-weight: bold; font-size: 14px; }
 
-        /* بطاقة المباراة المحدثة */
         .match-banner {
             background: #1c2733; border-radius: 8px; overflow: hidden; margin-bottom: 20px;
             border: 2px solid var(--main_color); cursor: pointer;
@@ -87,91 +86,84 @@
     <div class="btn-mode" onclick="toggleMode()">الوضع الليلي</div>
 </header>
 
-<!-- المشغل -->
+<!-- منطقة المشغل المزدوجة -->
 <div class="player-area">
     <div id="player"></div>
+    <iframe id="iframe-player" allowfullscreen="true" scrolling="no"></iframe>
 </div>
 
 <!-- السيرفرات المتعددة -->
-<div class="video-serv" id="server-list">
-    <!-- السيرفرات ستظهر هنا تلقائياً -->
-</div>
+<div class="video-serv" id="server-list"></div>
 
 <div class="container">
 
     <div class="ad-box">
-        <a href="https://omg10.com/4/10270118" target="_blank">📲 تحميل تطبيق BALLONTV لمشاهدة المباريات بدون تقطيع</a>
+        <a href="#" onclick="window.open('https://omg10.com/4/10270118')">📲 تحميل تطبيق BALLONTV لمتابعة ميسي وميامي بجودة عالية</a>
     </div>
 
-    <!-- بطاقة مباراة إسبانيا والأرجنتين -->
+    <!-- بطاقة مباراة إنتر ميامي وتورنتو -->
     <div class="match-banner" onclick="loadChannel(0)">
-        <div class="match-head">بث مباشر | نهائي الفيناليسيما المرتقب</div>
+        <div class="match-head">بث مباشر | الدوري الأمريكي MLS</div>
         <div class="match-teams">
             <div class="team">
-                <span class="flag">🇪🇸</span>
-                <div class="team-name">إسبانيا</div>
+                <span class="flag">🇺🇸</span>
+                <div class="team-name">إنتر ميامي</div>
             </div>
             <div class="vs">VS</div>
             <div class="team">
-                <span class="flag">🇦🇷</span>
-                <div class="team-name">الأرجنتين</div>
+                <span class="flag">🇨🇦</span>
+                <div class="team-name">تورنتو</div>
             </div>
         </div>
-        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">اختر السيرفر المناسب من الأعلى وابدأ المشاهدة</div>
+        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">مواجهة ميسي المرتقبة - اختر السيرفر وابدأ المشاهدة</div>
     </div>
 
-    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">القنوات الناقلة</h3>
+    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">القنوات والمصادر</h3>
     <div class="grid">
-        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN MAX 1</strong><span>4K Quality</span></div>
-        <div class="ch-card" onclick="loadChannel(2)"><strong>beIN MAX 2</strong><span>Full HD</span></div>
+        <div class="ch-card" onclick="loadChannel(0)"><strong>Apple TV</strong><span>MLS Season Pass</span></div>
+        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN SPORTS</strong><span>HD Quality</span></div>
     </div>
 
 </div>
 
-<a href="https://omg10.com/4/10241472" class="floating-btn" target="_blank">سيرفر احتياطي 🔥</a>
+<a href="https://omg10.com/4/10241472" class="floating-btn" target="_blank">سيرفر ميسي 🐐</a>
 
 <footer>BALLONTV &copy; 2024 - جميع الحقوق محفوظة</footer>
 
 <script>
-    // بيانات القنوات والسيرفرات المتعددة لمباراة إسبانيا والأرجنتين
+    // تحديث البيانات برابط مباراة إنتر ميامي الجديد
     const db = [
         {
-            name: "إسبانيا ضد الأرجنتين",
+            name: "إنتر ميامي ضد تورنتو",
             servers: [
-                { title: "سيرفر 1 | رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" },
-                { title: "سيرفر 2 | متعدد الجودات", url: "https://channel01-onlymex.akamaized.net/hls/live/2022749/event01/index_4.m3u8" },
-                { title: "سيرفر 3 | إنترنت ضعيف", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8" },
-                { title: "سيرفر 4 | YouTube", url: "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8" },
-                { title: "سيرفر 5 | احتياطي 1", url: "http://40.160.24.55/TSN_1/index.m3u8" },
-                { title: "سيرفر 6 | احتياطي 2", url: "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8" }
+                { title: "سيرفر 1 | VIP", url: "https://redperch.space/dramacardinal.php?id=alwan1", type: "iframe" },
+                { title: "سيرفر 2 | مباشر", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" },
+                { title: "سيرفر 3 | جودة متوسطة", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
             ]
         },
         {
-            name: "beIN MAX 1",
+            name: "beIN SPORTS",
             servers: [
-                { title: "سيرفر HD", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
-            ]
-        },
-        {
-            name: "beIN MAX 2",
-            servers: [
-                { title: "سيرفر HD", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8" }
+                { title: "سيرفر رئيسي", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" }
             ]
         }
     ];
 
-    // إعداد المشغل
-    var player = new Clappr.Player({
-        source: db[0].servers[0].url,
-        parentId: "#player",
-        plugins: [LevelSelector],
-        width: '100%',
-        height: '100%',
-        autoPlay: false,
-        mediacontrol: {seekbar: "#931800", buttons: "#931800"}
-    });
+    var clapprPlayer;
 
-    // وظيفة تبديل القنوات والسيرفرات
+    function initPlayer(source) {
+        if (clapprPlayer) clapprPlayer.destroy();
+        clapprPlayer = new Clappr.Player({
+            source: source,
+            parentId: "#player",
+            plugins: [LevelSelector],
+            width: '100%',
+            height: '100%',
+            autoPlay: true,
+            mediacontrol: {seekbar: "#f03e9b", buttons: "#f03e9b"}
+        });
+    }
+
     function loadChannel(index) {
         const ch = db[index];
         const serverList = document.getElementById('server-list');
@@ -182,26 +174,43 @@
             btn.innerText = srv.title;
             btn.className = (i === 0) ? 'active' : '';
             btn.onclick = () => {
-                player.configure({ source: srv.url });
-                player.play();
+                switchServer(srv);
                 document.querySelectorAll('.video-serv span').forEach(s => s.classList.remove('active'));
                 btn.classList.add('active');
-                if(Math.random() > 0.7) window.open("https://omg10.com/4/9047517", "_blank");
             };
             serverList.appendChild(btn);
         });
 
-        player.configure({ source: ch.servers[0].url });
-        player.play();
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        switchServer(ch.servers[0]);
+    }
+
+    function switchServer(srv) {
+        const clapprDiv = document.getElementById('player');
+        const iframePlayer = document.getElementById('iframe-player');
+
+        if (srv.type === "iframe") {
+            clapprDiv.style.display = "none";
+            iframePlayer.style.display = "block";
+            iframePlayer.src = srv.url;
+            if (clapprPlayer) clapprPlayer.pause();
+        } else {
+            iframePlayer.style.display = "none";
+            iframePlayer.src = "";
+            clapprDiv.style.display = "block";
+            initPlayer(srv.url);
+        }
+        
+        if(Math.random() > 0.8) window.open("https://omg10.com/4/9047517", "_blank");
     }
 
     function toggleMode() {
         document.body.classList.toggle('Night');
     }
 
+    // تشغيل القناة الأولى عند التحميل
     loadChannel(0);
 
+    // إعلان Pop-under عند أول ضغطة
     document.body.addEventListener('click', function() {
         if (!window.adsOnce) {
             window.open("https://omg10.com/4/10241472", "_blank");
