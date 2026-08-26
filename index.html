@@ -1,217 +1,317 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html dir="ltr" lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | إنتر ميامي ضد تورنتو - بث مباشر</title>
+    <title>BALLONTV PRO | Streaming Football en Direct</title>
     
-    <!-- مكتبة المشغل Clappr -->
+    <!-- Fonts & Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
 
     <style>
         :root {
-            --main_color: #f03e9b; /* لون قميص إنتر ميامي الزهري */
-            --body_bg: #eceef2;
-            --header_bg: #fff;
-            --header_color: #222;
-            --card_bg: #ffffff;
-            --text_color: #222;
+            --primary: #e91e63; /* Pink/Red Premium */
+            --bg-dark: #0a0e12;
+            --card-bg: #161b22;
+            --text-main: #ffffff;
+            --text-dim: #8b949e;
         }
 
-        .Night {
-            --body_bg: #0f1216;
-            --header_bg: #1a1d23;
-            --header_color: #fff;
-            --card_bg: #1c2733;
-            --text_color: #fff;
-        }
+        * { padding: 0; margin: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-        * { padding: 0; margin: 0; box-sizing: border-box; list-style: none; text-decoration: none; }
-        body { background: var(--body_bg); color: var(--text_color); font-family: 'Segoe UI', Tahoma, sans-serif; transition: 0.3s; }
-
+        /* Professional Header */
         header {
-            background: var(--header_bg); padding: 10px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+            background: rgba(22, 27, 34, 0.95);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
-        .logo { font-size: 24px; font-weight: bold; color: var(--main_color); }
-        .logo span { color: var(--header_color); }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--primary); }
+        .logo span { color: #fff; }
 
-        .btn-mode { cursor: pointer; background: var(--main_color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; }
+        .app-btn {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(233, 30, 99, 0.4);
+        }
+        .app-btn:hover { transform: scale(1.05); background: #ff2e7e; }
 
-        .player-area { background: #000; width: 100%; aspect-ratio: 16/9; position: relative; }
+        /* Player Area */
+        .player-section { background: #000; width: 100%; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .player-container { width: 100%; max-width: 1000px; margin: auto; aspect-ratio: 16/9; }
         #player, #iframe-player { width: 100% !important; height: 100% !important; border: none; }
         #iframe-player { display: none; }
 
-        .video-serv { display: flex; overflow-x: auto; background: #1f2024; padding: 10px; gap: 10px; }
-        .video-serv span { 
-            background: var(--main_color); color: white; padding: 8px 18px; 
-            border-radius: 4px; cursor: pointer; font-size: 14px; white-space: nowrap; 
-            border-bottom: 3px solid transparent;
+        /* Servers List */
+        .server-bar {
+            background: #1c2128;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            overflow-x: auto;
         }
-        .video-serv span.active { background: #444; border-bottom: 3px solid #fff; }
-
-        .container { padding: 15px; max-width: 1000px; margin: auto; }
-
-        .ad-box { background: #fff; border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; text-align: center; border-radius: 8px; }
-        .ad-box a { color: var(--main_color); font-weight: bold; font-size: 14px; }
-
-        .match-banner {
-            background: #1c2733; border-radius: 8px; overflow: hidden; margin-bottom: 20px;
-            border: 2px solid var(--main_color); cursor: pointer;
+        .server-btn {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-dim);
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            transition: 0.3s;
         }
-        .match-head { background: var(--main_color); color: white; padding: 8px; text-align: center; font-size: 14px; font-weight: bold; }
-        .match-teams { display: flex; align-items: center; justify-content: space-around; padding: 25px 10px; color: white; }
-        .team { text-align: center; width: 40%; }
-        .flag { font-size: 50px; display: block; margin-bottom: 5px; }
-        .team-name { font-size: 18px; font-weight: bold; }
-        .vs { font-size: 28px; font-weight: bold; color: var(--main_color); background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 5px; }
+        .server-btn.active { background: var(--primary); color: white; border-color: #fff; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-        .ch-card { background: var(--card_bg); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #ddd; cursor: pointer; }
+        /* Main Content */
+        .main-container { padding: 30px 5%; max-width: 1200px; margin: auto; }
 
-        .floating-btn {
-            position: fixed; bottom: 20px; left: 20px; background: #0088cc;
-            color: white; padding: 10px 15px; border-radius: 50px; font-weight: bold; z-index: 1000;
+        .section-title { font-size: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }
+
+        /* Match Cards Grid */
+        .match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
+        .match-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .match-card.active { background: rgba(233, 30, 99, 0.1); border-color: var(--primary); }
 
-        footer { text-align: center; padding: 20px; color: #888; font-size: 12px; }
+        .match-card .status { 
+            position: absolute; top: 10px; right: 15px; font-size: 10px; 
+            background: #ff0000; color: #fff; padding: 2px 8px; border-radius: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% {opacity: 1} 50% {opacity: 0.5} 100% {opacity: 1} }
+
+        .match-info { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .team { text-align: center; width: 45%; }
+        .team img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 14px; font-weight: 600; }
+        .vs-box { font-weight: 800; color: var(--primary); font-size: 18px; }
+
+        /* Footer Profit Area */
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 12px; }
+        
+        /* Ad Banner */
+        .banner-ad {
+            background: linear-gradient(90deg, #161b22, #21262d);
+            margin: 20px 0; padding: 20px; border-radius: 10px;
+            text-align: center; border: 1px dashed var(--primary);
+        }
+        .banner-ad a { color: #fff; text-decoration: none; font-weight: 600; }
+
+        .floating-action {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #25d366; color: white; padding: 12px 20px;
+            border-radius: 50px; font-weight: bold; font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 999;
+        }
     </style>
 </head>
-<body id="bodyTag">
+<body>
 
 <header>
-    <div class="logo">BALLON<span>TV</span></div>
-    <div class="btn-mode" onclick="toggleMode()">الوضع الليلي</div>
+    <div class="logo">BALLON<span>TV PRO</span></div>
+    <a href="https://omg10.com/4/10270118" target="_blank" class="app-btn">TÉLÉCHARGER L'APP 📲</a>
 </header>
 
-<!-- منطقة المشغل المزدوجة -->
-<div class="player-area">
-    <div id="player"></div>
-    <iframe id="iframe-player" allowfullscreen="true" scrolling="no"></iframe>
+<div class="player-section">
+    <div class="player-container">
+        <div id="player"></div>
+        <iframe id="iframe-player" allowfullscreen="true" scrolling="no"></iframe>
+    </div>
 </div>
 
-<!-- السيرفرات المتعددة -->
-<div class="video-serv" id="server-list"></div>
+<div class="server-bar" id="server-list">
+    <!-- Servers injected by JS -->
+</div>
 
-<div class="container">
-
-    <div class="ad-box">
-        <a href="#" onclick="window.open('https://omg10.com/4/10270118')">📲 تحميل تطبيق BALLONTV لمتابعة ميسي وميامي بجودة عالية</a>
+<div class="main-container">
+    
+    <div class="banner-ad">
+        <a href="https://omg10.com/4/10270118" target="_blank">🚀 Regardez en 4K sans pubs sur l'application officielle BALLONTV !</a>
     </div>
 
-    <!-- بطاقة مباراة إنتر ميامي وتورنتو -->
-    <div class="match-banner" onclick="loadChannel(0)">
-        <div class="match-head">بث مباشر | الدوري الأمريكي MLS</div>
-        <div class="match-teams">
-            <div class="team">
-                <span class="flag">🇺🇸</span>
-                <div class="team-name">إنتر ميامي</div>
-            </div>
-            <div class="vs">VS</div>
-            <div class="team">
-                <span class="flag">🇨🇦</span>
-                <div class="team-name">تورنتو</div>
-            </div>
-        </div>
-        <div style="text-align: center; padding-bottom: 10px; color: #aaa; font-size: 12px;">مواجهة ميسي المرتقبة - اختر السيرفر وابدأ المشاهدة</div>
-    </div>
-
-    <h3 style="margin-bottom: 15px; border-right: 4px solid var(--main_color); padding-right: 10px;">القنوات والمصادر</h3>
-    <div class="grid">
-        <div class="ch-card" onclick="loadChannel(0)"><strong>Apple TV</strong><span>MLS Season Pass</span></div>
-        <div class="ch-card" onclick="loadChannel(1)"><strong>beIN SPORTS</strong><span>HD Quality</span></div>
+    <h2 class="section-title">Matchs en Direct Aujourd'hui</h2>
+    
+    <div class="match-grid" id="match-list">
+        <!-- Matches injected by JS -->
     </div>
 
 </div>
 
-<a href="https://omg10.com/4/10241472" class="floating-btn" target="_blank">سيرفر ميسي 🐐</a>
+<a href="https://t.me/your_telegram" class="floating-action" target="_blank">Support Telegram 💬</a>
 
-<footer>BALLONTV &copy; 2024 - جميع الحقوق محفوظة</footer>
+<footer>
+    <p>&copy; 2026 BALLONTV PRO - All Rights Reserved</p>
+    <p style="margin-top:10px">Streaming HD Gratuit | UEFA - La Liga - Premier League</p>
+</footer>
 
 <script>
-    // تحديث البيانات برابط مباراة إنتر ميامي الجديد
-    const db = [
+    // Database of matches and links
+    const matches = [
         {
-            name: "إنتر ميامي ضد تورنتو",
+            id: 0,
+            home: "Real Madrid",
+            away: "Real Sociedad",
+            homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png",
+            awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/Real_Sociedad_logo.svg/1200px-Real_Sociedad_logo.svg.png",
             servers: [
-                { title: "سيرفر 1 | VIP", url: "https://redperch.space/dramacardinal.php?id=alwan1", type: "iframe" },
-                { title: "سيرفر 2 | مباشر", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
-                { title: "سيرفر 3 | جودة متوسطة", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
+                { title: "Serveur VIP (PHP)", url: "https://redperch.space/dramacardinal.php?id=alwan1", type: "iframe" },
+                { title: "HD Direct", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" }
             ]
         },
         {
-            name: "beIN SPORTS",
+            id: 1,
+            home: "Newcastle",
+            away: "West Brom",
+            homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Newcastle_United_Logo.svg/1200px-Newcastle_United_Logo.svg.png",
+            awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/WBA_Logo.svg/1200px-WBA_Logo.svg.png",
             servers: [
-                { title: "سيرفر رئيسي", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" }
+                { title: "Direct PL 1", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
+                { title: "Alternative HD", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
+            ]
+        },
+        {
+            id: 2,
+            home: "Tottenham",
+            away: "Charlton",
+            homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Tottenham_Hotspur.svg/1200px-Tottenham_Hotspur.svg.png",
+            awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Charlton_Athletic_FC_logo.svg/1200px-Charlton_Athletic_FC_logo.svg.png",
+            servers: [
+                { title: "Serveur Main", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
+            ]
+        },
+        {
+            id: 3,
+            home: "Lyon",
+            away: "Fenerbahçe",
+            homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/Olympique_Lyonnais_logo.svg/1200px-Olympique_Lyonnais_logo.svg.png",
+            awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/39/Fenerbah%C3%A7e_S.K._logo.svg/1200px-Fenerbah%C3%A7e_S.K._logo.svg.png",
+            servers: [
+                { title: "Canal+ Sport", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" }
             ]
         }
     ];
 
     var clapprPlayer;
 
-    function initPlayer(source) {
-        if (clapprPlayer) clapprPlayer.destroy();
-        clapprPlayer = new Clappr.Player({
-            source: source,
-            parentId: "#player",
-            plugins: [LevelSelector],
-            width: '100%',
-            height: '100%',
-            autoPlay: true,
-            mediacontrol: {seekbar: "#f03e9b", buttons: "#f03e9b"}
+    // Load Matches into the grid
+    function renderMatches() {
+        const list = document.getElementById('match-list');
+        matches.forEach(m => {
+            const card = document.createElement('div');
+            card.className = `match-card ${m.id === 0 ? 'active' : ''}`;
+            card.id = `match-${m.id}`;
+            card.onclick = () => selectMatch(m.id);
+            card.innerHTML = `
+                <div class="status">LIVE</div>
+                <div class="match-info">
+                    <div class="team">
+                        <img src="${m.homeLogo}">
+                        <div class="team-name">${m.home}</div>
+                    </div>
+                    <div class="vs-box">VS</div>
+                    <div class="team">
+                        <img src="${m.awayLogo}">
+                        <div class="team-name">${m.away}</div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(card);
         });
     }
 
-    function loadChannel(index) {
-        const ch = db[index];
-        const serverList = document.getElementById('server-list');
-        serverList.innerHTML = ''; 
+    function selectMatch(matchId) {
+        document.querySelectorAll('.match-card').forEach(c => c.classList.remove('active'));
+        document.getElementById(`match-${matchId}`).classList.add('active');
         
-        ch.servers.forEach((srv, i) => {
-            const btn = document.createElement('span');
+        const m = matches[matchId];
+        const serverList = document.getElementById('server-list');
+        serverList.innerHTML = '';
+
+        m.servers.forEach((srv, i) => {
+            const btn = document.createElement('div');
+            btn.className = `server-btn ${i === 0 ? 'active' : ''}`;
             btn.innerText = srv.title;
-            btn.className = (i === 0) ? 'active' : '';
-            btn.onclick = () => {
-                switchServer(srv);
-                document.querySelectorAll('.video-serv span').forEach(s => s.classList.remove('active'));
+            btn.onclick = (e) => {
+                document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                playSource(srv);
+                triggerAd();
             };
             serverList.appendChild(btn);
         });
 
-        switchServer(ch.servers[0]);
+        playSource(m.servers[0]);
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    function switchServer(srv) {
-        const clapprDiv = document.getElementById('player');
-        const iframePlayer = document.getElementById('iframe-player');
+    function playSource(srv) {
+        const pDiv = document.getElementById('player');
+        const iFrame = document.getElementById('iframe-player');
 
         if (srv.type === "iframe") {
-            clapprDiv.style.display = "none";
-            iframePlayer.style.display = "block";
-            iframePlayer.src = srv.url;
+            pDiv.style.display = "none";
+            iFrame.style.display = "block";
+            iFrame.src = srv.url;
             if (clapprPlayer) clapprPlayer.pause();
         } else {
-            iframePlayer.style.display = "none";
-            iframePlayer.src = "";
-            clapprDiv.style.display = "block";
-            initPlayer(srv.url);
+            iFrame.style.display = "none";
+            iFrame.src = "";
+            pDiv.style.display = "block";
+            if (clapprPlayer) {
+                clapprPlayer.configure({ source: srv.url });
+            } else {
+                clapprPlayer = new Clappr.Player({
+                    source: srv.url,
+                    parentId: "#player",
+                    plugins: [LevelSelector],
+                    width: '100%',
+                    height: '100%',
+                    autoPlay: true
+                });
+            }
         }
-        
-        if(Math.random() > 0.8) window.open("https://omg10.com/4/9047517", "_blank");
     }
 
-    function toggleMode() {
-        document.body.classList.toggle('Night');
+    function triggerAd() {
+        if(Math.random() > 0.5) { // 50% chance for extra profit
+            window.open("https://omg10.com/4/10241472", "_blank");
+        }
     }
 
-    // تشغيل القناة الأولى عند التحميل
-    loadChannel(0);
+    // Initialize
+    window.onload = () => {
+        renderMatches();
+        selectMatch(0);
+    };
 
-    // إعلان Pop-under عند أول ضغطة
-    document.body.addEventListener('click', function() {
+    // First click ad (Pop-under)
+    document.body.addEventListener('click', () => {
         if (!window.adsOnce) {
             window.open("https://omg10.com/4/10241472", "_blank");
             window.adsOnce = true;
