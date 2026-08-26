@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV PRO | Streaming Football en Direct</title>
+    <title>BALLONTV PRO | Direct Streaming HD</title>
     
-    <!-- Fonts & Libraries -->
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Video Players -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
 
     <style>
         :root {
-            --primary: #e91e63; /* Pink/Red Premium */
-            --bg-dark: #0a0e12;
+            --primary: #e91e63;
+            --secondary: #0088cc; /* Telegram Color */
+            --tiktok: #00f2ea;
+            --bg-dark: #0d1117;
             --card-bg: #161b22;
             --text-main: #ffffff;
             --text-dim: #8b949e;
@@ -24,118 +29,115 @@
 
         /* Professional Header */
         header {
-            background: rgba(22, 27, 34, 0.95);
-            padding: 15px 5%;
+            background: #161b22;
+            padding: 10px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--primary); }
+        .logo { font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none; }
         .logo span { color: #fff; }
 
-        .app-btn {
-            background: var(--primary);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(233, 30, 99, 0.4);
-        }
-        .app-btn:hover { transform: scale(1.05); background: #ff2e7e; }
+        .social-links { display: flex; gap: 15px; }
+        .social-icon { font-size: 20px; transition: 0.3s; color: #fff; text-decoration: none; }
+        .social-icon.tg:hover { color: var(--secondary); }
+        .social-icon.tk:hover { color: var(--tiktok); }
 
-        /* Player Area */
-        .player-section { background: #000; width: 100%; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* Player Section */
+        .player-section { background: #000; width: 100%; position: relative; }
         .player-container { width: 100%; max-width: 1000px; margin: auto; aspect-ratio: 16/9; }
         #player, #iframe-player { width: 100% !important; height: 100% !important; border: none; }
         #iframe-player { display: none; }
 
-        /* Servers List */
+        /* Multi-Server Bar */
         .server-bar {
             background: #1c2128;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .server-btn {
             background: rgba(255,255,255,0.05);
-            color: var(--text-dim);
-            padding: 8px 20px;
-            border-radius: 5px;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 13px;
-            border: 1px solid transparent;
+            font-size: 12px;
+            font-weight: 600;
             white-space: nowrap;
+            border: 1px solid transparent;
             transition: 0.3s;
         }
-        .server-btn.active { background: var(--primary); color: white; border-color: #fff; }
+        .server-btn.active { background: var(--primary); border-color: #fff; }
 
-        /* Main Content */
-        .main-container { padding: 30px 5%; max-width: 1200px; margin: auto; }
+        /* Main Container */
+        .main-container { padding: 25px 5%; max-width: 1200px; margin: auto; }
+        .section-title { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--primary); }
 
-        .section-title { font-size: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }
-
-        /* Match Cards Grid */
-        .match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        /* Match Grid */
+        .match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
         .match-card {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 15px;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.3s;
             position: relative;
-            overflow: hidden;
         }
-        .match-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .match-card.active { background: rgba(233, 30, 99, 0.1); border-color: var(--primary); }
+        .match-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .match-card.active { background: rgba(233, 30, 99, 0.15); border-color: var(--primary); }
 
-        .match-card .status { 
-            position: absolute; top: 10px; right: 15px; font-size: 10px; 
-            background: #ff0000; color: #fff; padding: 2px 8px; border-radius: 10px;
-            animation: pulse 1.5s infinite;
+        .live-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: #f00; color: #fff; font-size: 9px;
+            padding: 2px 8px; border-radius: 10px; font-weight: bold;
+            animation: blink 1.2s infinite;
         }
-        @keyframes pulse { 0% {opacity: 1} 50% {opacity: 0.5} 100% {opacity: 1} }
+        @keyframes blink { 0%,100% {opacity:1} 50% {opacity:0.4} }
 
-        .match-info { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-        .team { text-align: center; width: 45%; }
-        .team img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
-        .team-name { font-size: 14px; font-weight: 600; }
-        .vs-box { font-weight: 800; color: var(--primary); font-size: 18px; }
+        .match-teams { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; }
+        .team { text-align: center; width: 40%; }
+        .team img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 13px; font-weight: 600; color: #eee; }
+        .vs { font-weight: 900; color: var(--primary); font-size: 16px; }
 
-        /* Footer Profit Area */
-        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 12px; }
-        
-        /* Ad Banner */
-        .banner-ad {
+        /* Footer & App Download */
+        .download-banner {
             background: linear-gradient(90deg, #161b22, #21262d);
             margin: 20px 0; padding: 20px; border-radius: 10px;
             text-align: center; border: 1px dashed var(--primary);
         }
-        .banner-ad a { color: #fff; text-decoration: none; font-weight: 600; }
+        .btn-main {
+            background: var(--primary); color: #fff; text-decoration: none;
+            padding: 10px 25px; border-radius: 50px; font-weight: 700;
+            display: inline-block; margin-top: 10px; transition: 0.3s;
+        }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(233, 30, 99, 0.4); }
 
-        .floating-action {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #25d366; color: white; padding: 12px 20px;
-            border-radius: 50px; font-weight: bold; font-size: 14px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 999;
+        footer { text-align: center; padding: 30px; color: var(--text-dim); font-size: 11px; }
+
+        /* Responsive Mobile */
+        @media (max-width: 600px) {
+            .logo { font-size: 16px; }
+            .server-bar { justify-content: flex-start; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">BALLON<span>TV PRO</span></div>
-    <a href="https://omg10.com/4/10270118" target="_blank" class="app-btn">TÉLÉCHARGER L'APP 📲</a>
+    <a href="#" class="logo">BALLON<span>TV LIVE</span></a>
+    <div class="social-links">
+        <a href="https://tiktok.com/@satsport66" target="_blank" class="social-icon tk"><i class="fab fa-tiktok"></i></a>
+        <a href="https://t.me/ballontvlive" target="_blank" class="social-icon tg"><i class="fab fa-telegram"></i></a>
+    </div>
 </header>
 
 <div class="player-section">
@@ -146,80 +148,89 @@
 </div>
 
 <div class="server-bar" id="server-list">
-    <!-- Servers injected by JS -->
+    <!-- Server buttons injected here -->
 </div>
 
 <div class="main-container">
     
-    <div class="banner-ad">
-        <a href="https://omg10.com/4/10270118" target="_blank">🚀 Regardez en 4K sans pubs sur l'application officielle BALLONTV !</a>
+    <div class="download-banner">
+        <h3>🚀 APPLICATION BALLONTV</h3>
+        <p style="font-size: 13px; color: var(--text-dim);">Regardez tous les matchs sans publicités et en qualité 4K.</p>
+        <a href="https://t.me/ballontvlive" target="_blank" class="btn-main">TÉLÉCHARGER MAINTENANT</a>
     </div>
 
-    <h2 class="section-title">Matchs en Direct Aujourd'hui</h2>
+    <h2 class="section-title"><i class="fas fa-headset"></i> Matchs en Direct de la Semaine</h2>
     
     <div class="match-grid" id="match-list">
-        <!-- Matches injected by JS -->
+        <!-- Match cards injected here -->
     </div>
 
 </div>
 
-<a href="https://t.me/your_telegram" class="floating-action" target="_blank">Support Telegram 💬</a>
-
 <footer>
-    <p>&copy; 2026 BALLONTV PRO - All Rights Reserved</p>
-    <p style="margin-top:10px">Streaming HD Gratuit | UEFA - La Liga - Premier League</p>
+    <p>&copy; 2026 BALLONTV PRO - Streaming Sportif Gratuit</p>
+    <p>Rejoignez-nous sur TikTok @satsport66 pour les résumés</p>
 </footer>
 
 <script>
-    // Database of matches and links
+    // Database of matches with 5 servers each
     const matches = [
         {
             id: 0,
-            home: "Real Madrid",
-            away: "Real Sociedad",
+            home: "Real Madrid", away: "Real Sociedad",
             homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png",
             awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/Real_Sociedad_logo.svg/1200px-Real_Sociedad_logo.svg.png",
             servers: [
-                { title: "Serveur VIP (PHP)", url: "https://redperch.space/dramacardinal.php?id=alwan1", type: "iframe" },
-                { title: "HD Direct", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" }
+                { title: "SERVEUR 1 (VIP)", url: "https://redperch.space/dramacardinal.php?id=alwan1", type: "iframe" },
+                { title: "SERVEUR 2 (HD)", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 3 (4K)", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 4 (SD)", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 5 (Backup)", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" }
             ]
         },
         {
             id: 1,
-            home: "Newcastle",
-            away: "West Brom",
+            home: "Newcastle", away: "West Brom",
             homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Newcastle_United_Logo.svg/1200px-Newcastle_United_Logo.svg.png",
             awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/WBA_Logo.svg/1200px-WBA_Logo.svg.png",
             servers: [
-                { title: "Direct PL 1", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
-                { title: "Alternative HD", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
+                { title: "SERVEUR 1", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 2", url: "https://redperch.space/dramacardinal.php?id=alwan2", type: "iframe" },
+                { title: "SERVEUR 3", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 4", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" },
+                { title: "SERVEUR 5", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" }
             ]
         },
         {
             id: 2,
-            home: "Tottenham",
-            away: "Charlton",
+            home: "Tottenham", away: "Charlton",
             homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Tottenham_Hotspur.svg/1200px-Tottenham_Hotspur.svg.png",
             awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Charlton_Athletic_FC_logo.svg/1200px-Charlton_Athletic_FC_logo.svg.png",
             servers: [
-                { title: "Serveur Main", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" }
+                { title: "SERVEUR 1", url: "https://redperch.space/dramacardinal.php?id=alwan3", type: "iframe" },
+                { title: "SERVEUR 2", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 3", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 4", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" },
+                { title: "SERVEUR 5", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" }
             ]
         },
         {
             id: 3,
-            home: "Lyon",
-            away: "Fenerbahçe",
+            home: "Lyon", away: "Fenerbahçe",
             homeLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/Olympique_Lyonnais_logo.svg/1200px-Olympique_Lyonnais_logo.svg.png",
             awayLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/39/Fenerbah%C3%A7e_S.K._logo.svg/1200px-Fenerbah%C3%A7e_S.K._logo.svg.png",
             servers: [
-                { title: "Canal+ Sport", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" }
+                { title: "SERVEUR 1", url: "https://redperch.space/dramacardinal.php?id=alwan4", type: "iframe" },
+                { title: "SERVEUR 2", url: "http://cp11.adabmedia.com/hls2/persiana.m3u8", type: "m3u8" },
+                { title: "SERVEUR 3", url: "http://50.7.120.34:8080/DAZN1/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 4", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "m3u8" },
+                { title: "SERVEUR 5", url: "https://table.houseinventer.com/pdf/AzMjD2IyADQPb2tLfQ/index.m3u8", type: "m3u8" }
             ]
         }
     ];
 
     var clapprPlayer;
 
-    // Load Matches into the grid
     function renderMatches() {
         const list = document.getElementById('match-list');
         matches.forEach(m => {
@@ -228,15 +239,15 @@
             card.id = `match-${m.id}`;
             card.onclick = () => selectMatch(m.id);
             card.innerHTML = `
-                <div class="status">LIVE</div>
-                <div class="match-info">
+                <div class="live-badge">LIVE</div>
+                <div class="match-teams">
                     <div class="team">
-                        <img src="${m.homeLogo}">
+                        <img src="${m.homeLogo}" alt="Home">
                         <div class="team-name">${m.home}</div>
                     </div>
-                    <div class="vs-box">VS</div>
+                    <div class="vs">VS</div>
                     <div class="team">
-                        <img src="${m.awayLogo}">
+                        <img src="${m.awayLogo}" alt="Away">
                         <div class="team-name">${m.away}</div>
                     </div>
                 </div>
@@ -257,11 +268,11 @@
             const btn = document.createElement('div');
             btn.className = `server-btn ${i === 0 ? 'active' : ''}`;
             btn.innerText = srv.title;
-            btn.onclick = (e) => {
+            btn.onclick = () => {
                 document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 playSource(srv);
-                triggerAd();
+                if(Math.random() > 0.6) window.open("https://omg10.com/4/10241472", "_blank");
             };
             serverList.appendChild(btn);
         });
@@ -290,33 +301,24 @@
                     source: srv.url,
                     parentId: "#player",
                     plugins: [LevelSelector],
-                    width: '100%',
-                    height: '100%',
-                    autoPlay: true
+                    width: '100%', height: '100%', autoPlay: true
                 });
             }
         }
     }
 
-    function triggerAd() {
-        if(Math.random() > 0.5) { // 50% chance for extra profit
-            window.open("https://omg10.com/4/10241472", "_blank");
-        }
-    }
-
-    // Initialize
     window.onload = () => {
         renderMatches();
         selectMatch(0);
+        
+        // Pop-under ad on first click
+        document.body.addEventListener('click', () => {
+            if (!window.adsOnce) {
+                window.open("https://omg10.com/4/10241472", "_blank");
+                window.adsOnce = true;
+            }
+        }, { once: true });
     };
-
-    // First click ad (Pop-under)
-    document.body.addEventListener('click', () => {
-        if (!window.adsOnce) {
-            window.open("https://omg10.com/4/10241472", "_blank");
-            window.adsOnce = true;
-        }
-    }, { once: true });
 </script>
 
 </body>
