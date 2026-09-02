@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV PRO | Streaming Foot Premium</title>
+    <title>BALLONTV PRO | Streaming & Scores en Direct</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Video Player (Le lecteur du serveur 4) -->
+    <!-- Video Player Libraries -->
     <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
 
     <style>
         :root {
-            --primary: #ff0057; /* Couleur vive pour l'action */
+            --primary: #ff0057;
+            --secondary: #0088cc;
             --bg-dark: #05070a;
             --card-bg: #0f1218;
             --text-main: #ffffff;
             --text-dim: #a0a6ac;
+            --live-green: #00ff88;
         }
 
         * { padding: 0; margin: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-        /* Header Professionnel */
+        /* --- Header --- */
         header {
             background: #0f1218;
             padding: 12px 5%;
@@ -34,96 +36,92 @@
             align-items: center;
             border-bottom: 2px solid var(--primary);
             position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(10px);
         }
-        .logo { font-size: 22px; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .logo { font-size: 20px; font-weight: 800; color: var(--primary); text-decoration: none; }
         .logo span { color: #fff; }
 
-        .social-links { display: flex; gap: 15px; }
-        .social-icon { font-size: 22px; color: #fff; transition: 0.3s; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { font-size: 20px; color: #fff; transition: 0.3s; }
         .social-icon:hover { color: var(--primary); transform: scale(1.1); }
 
-        /* Unified Player Section */
+        /* --- Player Section --- */
         .player-section { background: #000; width: 100%; border-bottom: 1px solid #1f232b; }
         .player-container { width: 100%; max-width: 900px; margin: auto; aspect-ratio: 16/9; }
         #unified-player { width: 100% !important; height: 100% !important; }
 
-        /* Universal Server Bar */
+        /* --- Server Bar --- */
         .server-bar {
             background: #0f1218;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            white-space: nowrap;
         }
         .server-btn {
             background: rgba(255,255,255,0.07);
             color: #fff;
-            padding: 10px 22px;
-            border-radius: 6px;
+            padding: 8px 18px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
+            white-space: nowrap;
             border: 1px solid transparent;
             transition: 0.3s;
         }
-        .server-btn.active { background: var(--primary); border-color: #fff; box-shadow: 0 0 15px rgba(255, 0, 87, 0.4); }
+        .server-btn.active { background: var(--primary); border-color: #fff; }
 
-        /* Main Content */
-        .main-container { padding: 30px 5%; max-width: 1200px; margin: auto; }
-        .section-title { font-size: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        /* --- Main Content --- */
+        .main-container { padding: 25px 5%; max-width: 1200px; margin: auto; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-size: 18px; display: flex; align-items: center; gap: 10px; }
         .section-title i { color: var(--primary); }
 
-        /* Match Grid */
-        .match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        /* --- Match Schedule (Automated) --- */
+        .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
+        .league-group { margin-bottom: 25px; }
+        .league-title { 
+            background: #1c2128; padding: 10px 15px; border-radius: 8px; 
+            font-size: 13px; font-weight: 600; color: var(--text-dim);
+            margin-bottom: 10px; border-left: 4px solid var(--primary);
+        }
+
         .match-card {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             border: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
             transition: 0.3s;
-            position: relative;
         }
-        .match-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .match-card.active { background: rgba(255, 0, 87, 0.1); border-color: var(--primary); }
+        .match-card:hover { border-color: var(--primary); background: #161a22; }
 
-        .live-badge {
-            position: absolute; top: 15px; right: 15px;
-            background: #ff0000; color: #fff; font-size: 10px;
-            padding: 3px 10px; border-radius: 12px; font-weight: bold;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse { 0%,100% {opacity:1} 50% {opacity:0.4} }
+        .team { text-align: center; width: 35%; }
+        .team img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
+        .team-name { font-size: 12px; font-weight: 600; display: block; }
 
-        .match-teams { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; }
-        .team { text-align: center; width: 40%; }
-        .team img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 10px; }
-        .team-name { font-size: 14px; font-weight: 600; color: #fff; }
-        .vs { font-weight: 900; color: var(--primary); font-size: 20px; font-style: italic; }
+        .match-info { text-align: center; width: 30%; }
+        .match-time { font-size: 14px; font-weight: 800; color: var(--primary); display: block; }
+        .match-status { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+        .live-pulse { color: var(--live-green); animation: blink 1s infinite; font-weight: 800; }
 
-        /* Telegram Banner */
-        .promo-banner {
-            background: linear-gradient(135deg, #0088cc, #004466);
-            margin: 25px 0; padding: 20px; border-radius: 12px;
-            text-align: center; color: #fff;
-        }
-        .btn-tg {
-            background: #fff; color: #0088cc; text-decoration: none;
-            padding: 10px 30px; border-radius: 50px; font-weight: 800;
-            display: inline-block; margin-top: 15px; transition: 0.3s;
-        }
-        .btn-tg:hover { transform: scale(1.05); }
+        @keyframes blink { 0%,100% {opacity:1} 50% {opacity:0.4} }
 
-        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 12px; border-top: 1px solid #1f232b; }
+        /* --- Footer --- */
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 11px; border-top: 1px solid #1f232b; }
 
+        #loading { text-align: center; padding: 50px; color: var(--primary); font-weight: 600; }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="#" class="logo">BALLON<span>TV LIVE</span></a>
+    <a href="#" class="logo">BALLON<span>TV PRO</span></a>
     <div class="social-links">
         <a href="https://tiktok.com/@satsport66" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
         <a href="https://t.me/ballontvlive" target="_blank" class="social-icon"><i class="fab fa-telegram"></i></a>
@@ -136,167 +134,143 @@
     </div>
 </div>
 
-<!-- Five Servers Bar (All using Server 4 Player) -->
 <div class="server-bar" id="server-list">
-    <!-- Server buttons injected by JS -->
+    <div class="server-btn active" onclick="changeServer(0)">SERVEUR 1</div>
+    <div class="server-btn" onclick="changeServer(1)">SERVEUR 2</div>
+    <div class="server-btn" onclick="changeServer(2)">SERVEUR 3</div>
+    <div class="server-btn" onclick="changeServer(3)">SERVEUR 4</div>
+    <div class="server-btn" onclick="changeServer(4)">SERVEUR 5</div>
 </div>
 
 <div class="main-container">
-    
-    <div class="promo-banner">
-        <h3>🚀 APPLICATION BALLONTV V7</h3>
-        <p>Streaming 4K, sans pubs et support technique 24/7.</p>
-        <a href="https://t.me/ballontvlive" target="_blank" class="btn-tg"><i class="fab fa-telegram"></i> TÉLÉCHARGER L'APP</a>
+    <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Matchs d'aujourd'hui</h2>
     </div>
 
-    <h2 class="section-title"><i class="fas fa-play-circle"></i> Matchs en Direct</h2>
-    
-    <div class="match-grid" id="match-list">
-        <!-- Matches injected by JS -->
-    </div>
-
+    <div id="loading"><i class="fas fa-sync fa-spin"></i> Mise à jour des matchs...</div>
+    <div id="schedule-container"></div>
 </div>
 
 <footer>
     <p>&copy; 2026 BALLONTV PRO - Streaming Sportif Gratuit</p>
-    <p style="margin-top:5px">Suivez-nous sur TikTok @satsport66 pour les moments forts</p>
+    <p>Suivez-nous sur TikTok @satsport66 | Telegram @ballontvlive</p>
 </footer>
 
 <script>
-    // Liste des matchs (قم بوضع روابط الصور التي عدلتها هنا)
-    const matches = [
-        {
-            id: 0,
-            home: "Real Madrid", away: "Real Sociedad",
-            homeLogo: "https://siiiirtv.live/uploads/teams/3396.webp",
-            awayLogo: "https://siiiirtv.live/uploads/teams/63.webp",
-            links: [
-                "https://p1.domain761.sbs/disney3/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=1bc5e1472b5a4f1b8257e53ce352c11c1755d4cd-a7-1787819964-1787765964", // Serveur 1
-                "https://1nyaler.streamhostingcdn.top/stream/25/index.m3u8",   // Serveur 2
-                "https://p2.domain761.sbs/espnplus1/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=e88f2a71326b82cad9c91b08b3a4cc2d96bece86-e9-1787820016-1787766016eriscope-replay-direct-prod-eu-west-1-public/master_dynamic_delta.m3u8?type=live", // Serveur 3
-                "https://p1.domain761.sbs/espn/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=b54457d01b9e3c821fdade27550d4f5abd3a3ab4-2d-1787820043-1787766043", // Serveur 4 (Le Lecteur)
-                "http://b84203c4.ottrast.com/iptv/LY9PHWZHRXA5SE/2522/index.m3u8" // Serveur 5
-            ]
-        },
-        {
-            id: 1,
-            home: "Newcastle", away: "West Brom",
-            homeLogo: "https://siiiirtv.live/uploads/teams/220.webp",
-            awayLogo: "https://siiiirtv.live/uploads/teams/4138.webp",
-            links: [
-                "http://50.7.120.34:8080/DAZN1/index.m3u8", 
-                "http://40.160.24.55/TSN_1/index.m3u8",
-                "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8",
-                "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8",
-                "http://cp11.adabmedia.com/hls2/persiana.m3u8"
-            ]
-        },
-        {
-            id: 2,
-            home: "Tottenham", away: "Charlton",
-            homeLogo: "https://siiiirtv.live/uploads/teams/222.webp",
-            awayLogo: "https://siiiirtv.live/uploads/teams/4199.webp",
-            links: [
-                "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8",
-                "https://1nyaler.streamhostingcdn.top/stream/20/index.m3u8",
-                "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8",
-                "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8",
-                "https://p2.domain761.sbs/disney1/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=30957085b07053c5d5a304d83d9267edb50e5e56-ba-1787819774-1787765774"
-            ]
-        },
-        {
-            id: 3,
-            home: "Lyon", away: "Fenerbahçe",
-            homeLogo: "https://siiiirtv.live/uploads/teams/249.webp",
-            awayLogo: "https://siiiirtv.live/uploads/teams/3559.webp",
-            links: [
-                "https://p2.domain761.sbs/disney4/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=a4c00a509caa604933ec34cc3e435666bb085b62-d6-1787820113-1787766113",
-                "https://p2.domain761.sbs/paramount5/tracks-v1a1/mono.m3u8?ip=196.115.39.125&token=d013aa4e292065c594f3ff6cef2bca4a05baae9e-71-1787820151-1787766151",
-                "https://1nyaler.streamhostingcdn.top/stream/22/index.m3u8",
-                "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8",
-                "http://cp11.adabmedia.com/hls2/persiana.m3u8"
-            ]
-        }
+    // الإعدادات الافتراضية
+    const API_URL = "https://def.yacinelive.com/api/events";
+    // روابط البث الافتراضية (يمكنك تغييرها لاحقاً)
+    let currentStreams = [
+        "https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8",
+        "http://50.7.120.34:8080/DAZN1/index.m3u8",
+        "http://40.160.24.55/TSN_1/index.m3u8",
+        "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8",
+        "http://cp11.adabmedia.com/hls2/persiana.m3u8"
     ];
 
-    var player;
+    let player;
 
-    function initApp() {
-        const list = document.getElementById('match-list');
-        matches.forEach(m => {
-            const card = document.createElement('div');
-            card.className = `match-card ${m.id === 0 ? 'active' : ''}`;
-            card.id = `m-${m.id}`;
-            card.onclick = () => loadMatch(m.id);
-            card.innerHTML = `
-                <div class="live-badge">DIRECT</div>
-                <div class="match-teams">
-                    <div class="team">
-                        <img src="${m.homeLogo}">
-                        <div class="team-name">${m.home}</div>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="team">
-                        <img src="${m.awayLogo}">
-                        <div class="team-name">${m.away}</div>
-                    </div>
-                </div>
-            `;
-            list.appendChild(card);
-        });
-        loadMatch(0);
+    // جالب البيانات الآلي
+    async function loadSchedule() {
+        try {
+            // ملاحظة: قد تحتاج لبروكسي CORS إذا كنت تشغله من المتصفح مباشرة
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            renderSchedule(data);
+        } catch (error) {
+            console.error("API Error:", error);
+            document.getElementById('loading').innerHTML = "⚠️ Connexion API impossible. Rechargez la page.";
+        }
     }
 
-    function loadMatch(id) {
-        document.querySelectorAll('.match-card').forEach(c => c.classList.remove('active'));
-        document.getElementById(`m-${id}`).classList.add('active');
-        
-        const m = matches[id];
-        const sList = document.getElementById('server-list');
-        sList.innerHTML = '';
+    function renderSchedule(events) {
+        const container = document.getElementById('schedule-container');
+        document.getElementById('loading').style.display = 'none';
+        container.innerHTML = '';
 
-        m.links.forEach((link, index) => {
-            const btn = document.createElement('div');
-            btn.className = `server-btn ${index === 0 ? 'active' : ''}`;
-            btn.innerText = `SERVEUR ${index + 1}`;
-            btn.onclick = () => {
-                document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                startPlayer(link);
-                // Ads Logic
-                if(Math.random() > 0.6) window.open("https://omg10.com/4/10241472", "_blank");
-            };
-            sList.appendChild(btn);
-        });
+        // تجميع المباريات حسب البطولة
+        const grouped = events.reduce((acc, event) => {
+            const league = event.league || "Autres Compétitions";
+            if (!acc[league]) acc[league] = [];
+            acc[league].push(event);
+            return acc;
+        }, {});
 
-        startPlayer(m.links[0]);
+        for (const league in grouped) {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'league-group';
+            groupDiv.innerHTML = `<div class="league-title">${league}</div>`;
+
+            const matchGrid = document.createElement('div');
+            matchGrid.className = 'schedule-grid';
+
+            grouped[league].forEach(match => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.onclick = () => {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    startPlayer(currentStreams[0]); // تشغيل السيرفر الأول عند اختيار المباراة
+                };
+
+                card.innerHTML = `
+                    <div class="team">
+                        <img src="${match.img1}" alt="${match.team1}">
+                        <span class="team-name">${match.team1}</span>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">${match.time}</span>
+                        <span class="match-status">${match.channel}</span>
+                    </div>
+                    <div class="team">
+                        <img src="${match.img2}" alt="${match.team2}">
+                        <span class="team-name">${match.team2}</span>
+                    </div>
+                `;
+                matchGrid.appendChild(card);
+            });
+
+            groupDiv.appendChild(matchGrid);
+            container.appendChild(groupDiv);
+        }
     }
 
-    function startPlayer(sourceUrl) {
+    // إدارة المشغل
+    function startPlayer(url) {
         if (player) {
-            player.configure({ source: sourceUrl });
+            player.configure({ source: url });
         } else {
             player = new Clappr.Player({
-                source: sourceUrl,
+                source: url,
                 parentId: "#unified-player",
                 plugins: [LevelSelector],
-                width: '100%',
-                height: '100%',
-                autoPlay: true,
+                width: '100%', height: '100%', autoPlay: true,
                 mediacontrol: {seekbar: "#ff0057", buttons: "#ff0057"}
             });
         }
     }
 
-    window.onload = initApp;
+    function changeServer(index) {
+        const btns = document.querySelectorAll('.server-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        btns[index].classList.add('active');
+        startPlayer(currentStreams[index]);
+        
+        // إعلان Pop-under للربح (اختياري)
+        if(Math.random() > 0.5) window.open("https://omg10.com/4/10241472", "_blank");
+    }
 
-    // Pop-under ad
-    document.body.addEventListener('click', () => {
-        if (!window.adsDone) {
-            window.open("https://omg10.com/4/10241472", "_blank");
-            window.adsDone = true;
-        }
-    }, { once: true });
+    window.onload = () => {
+        loadSchedule();
+        startPlayer(currentStreams[0]);
+        
+        // إعلان عند أول ضغطة
+        document.body.addEventListener('click', () => {
+            if (!window.adsDone) {
+                window.open("https://omg10.com/4/10241472", "_blank");
+                window.adsDone = true;
+            }
+        }, { once: true });
+    };
 </script>
 
 </body>
