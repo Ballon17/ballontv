@@ -3,56 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mondepro | جدول المباريات</title>
+    <title>Mondepro | المحرك الذكي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --surface: #121212; --accent: #ffcc00; --text: #fff; --dim: #a0a0a0; --live: #e50914; }
-        * { margin:0; padding:0; box-sizing:border-box; outline:none !important; }
-        body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x: hidden; }
-        
-        .top-bar { position:fixed; top:0; width:100%; height:65px; background:rgba(0,0,0,0.95); display:flex; align-items:center; justify-content:center; z-index:1000; border-bottom:1px solid #222; }
-        .logo-text { font-weight:900; font-size:24px; color:#fff; }
-        .logo-text span { color:var(--accent); }
+        :root { --bg: #050505; --surface: #111111; --accent: #ffcc00; --text: #ffffff; --dim: #888888; --live: #ff0000; }
+        * { margin:0; padding:0; box-sizing:border-box; outline:none; }
+        body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-        main { padding-top: 65px; padding-bottom: 40px; }
+        /* الهيدر */
+        .top-bar { position:fixed; top:0; width:100%; height:60px; background:rgba(0,0,0,0.9); backdrop-filter: blur(10px); display:flex; align-items:center; justify-content:center; z-index:1000; border-bottom:1px solid #222; }
+        .logo-text { font-weight:900; font-size:22px; text-transform: uppercase; }
+        .logo-text span { color:var(--accent); text-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
+
+        main { padding-top: 70px; padding-bottom: 30px; max-width: 600px; margin: 0 auto; }
 
         /* التقويم */
-        .calendar-wrap { padding: 15px 10px; background: #0f0f0f; border-bottom: 1px solid #222; margin-bottom: 15px; position: sticky; top: 65px; z-index: 999; }
-        .cal-days-row { display: flex; justify-content: space-around; gap: 5px; margin-bottom: 15px; }
-        .cal-day { flex: 1; padding: 10px 5px; background: var(--surface); color: var(--dim); border-radius: 12px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; gap: 4px; }
-        .cal-day.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: bold; }
-        .cal-day-name { font-size: 10px; }
-        .cal-day-num { font-size: 18px; font-weight: 900; }
+        .calendar-scroll { display: flex; overflow-x: auto; gap: 8px; padding: 10px 15px; scrollbar-width: none; }
+        .calendar-scroll::-webkit-scrollbar { display: none; }
+        .date-item { min-width: 60px; padding: 10px; background: var(--surface); border-radius: 12px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.3s; }
+        .date-item.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        .date-item span { display: block; }
+        .d-name { font-size: 10px; font-weight: bold; }
+        .d-num { font-size: 18px; font-weight: 900; }
 
         /* الفلترة */
-        .filter-row { display: flex; justify-content: center; gap: 10px; padding: 0 10px; }
-        .filter-btn { flex: 1; padding: 10px; border-radius: 25px; border: 1px solid #333; background: transparent; color: var(--dim); font-size: 13px; font-weight: 900; cursor: pointer; font-family: inherit; }
-        .filter-btn.active { background: #fff; color: #000; border-color: #fff; }
+        .tabs { display: flex; gap: 10px; padding: 10px 15px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #222; background: var(--surface); color: var(--dim); cursor: pointer; font-family: inherit; font-weight: bold; font-size: 13px; }
+        .tab-btn.active { background: #fff; color: #000; border-color: #fff; }
 
-        /* تجميع البطولات */
-        .league-group { margin: 0 15px 20px; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
-        .group-header { background: #1a1a1a; color: var(--accent); font-weight: 900; font-size: 13px; padding: 12px 15px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 10px; }
+        /* البطولات والمباريات */
+        .league-card { margin: 15px; background: var(--surface); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+        .league-title { background: #1a1a1a; padding: 10px 15px; font-size: 13px; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #222; }
         
-        /* كرت المباراة */
-        .m-card { background: #121212; border-bottom: 1px solid #1a1a1a; padding: 20px 10px; position: relative; }
-        .m-live-tag { position: absolute; top: 0; left: 0; font-size: 10px; font-weight: bold; padding: 4px 12px; border-bottom-right-radius: 12px; z-index: 10; color: #fff; background: #333; }
-        .live-now { background: var(--live); animation: blink 1s infinite; }
-
-        .m-grid { display: grid; grid-template-columns: 1fr 90px 1fr; align-items: center; text-align: center; }
-        .team-box img { width: 42px; height: 42px; object-fit: contain; margin-bottom: 8px; }
-        .t-name { font-size: 12px; font-weight: 900; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .score-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 5px; border: 1px solid #222; }
-        .score-num { font-size: 18px; font-weight: 900; color: var(--accent); }
-        .m-time { font-size: 11px; color: #fff; margin-top: 5px; }
-
-        .m-footer { padding: 10px; background: rgba(0,0,0,0.2); display: flex; justify-content: center; gap: 15px; font-size: 10px; color: #777; }
+        .match-item { padding: 20px 15px; border-bottom: 1px solid #1a1a1a; position: relative; }
+        .match-item:last-child { border-bottom: none; }
         
-        .loader { text-align: center; padding: 50px; color: var(--accent); }
-        .empty-msg { text-align: center; padding: 50px; color: var(--dim); }
+        .match-grid { display: grid; grid-template-columns: 1fr 80px 1fr; align-items: center; text-align: center; }
+        .team img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
+        .team .name { font-size: 12px; font-weight: bold; display: block; }
+        
+        .score-wrap { background: #000; border-radius: 10px; padding: 8px 5px; border: 1px solid #222; }
+        .score { font-size: 18px; font-weight: 900; color: var(--accent); }
+        .status { font-size: 10px; color: #fff; margin-top: 4px; display: block; }
 
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .live-label { position: absolute; top: 0; left: 0; background: var(--live); color: #fff; font-size: 9px; font-weight: bold; padding: 3px 10px; border-bottom-right-radius: 10px; animation: blink 1s infinite; }
+
+        .loader { text-align: center; padding: 50px; color: var(--accent); font-weight: bold; }
+
+        @keyframes blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -62,151 +61,144 @@
 </header>
 
 <main>
-    <div class="calendar-wrap">
-        <div class="cal-days-row" id="calendar-days"></div>
-        <div class="filter-row">
-            <button id="btn-live" class="filter-btn" onclick="setFilter('live')">مباشر الآن</button>
-            <button id="btn-all" class="filter-btn active" onclick="setFilter('all')">كل المباريات</button>
-        </div>
+    <div class="calendar-scroll" id="calendar"></div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" id="all-tab" onclick="switchFilter('all')">كل المباريات</button>
+        <button class="tab-btn" id="live-tab" onclick="switchFilter('live')"><i class="fas fa-circle" style="font-size: 8px; color:red;"></i> مباشر</button>
     </div>
 
-    <div id="matches-content">
-        <!-- سيتم شحن المباريات هنا -->
+    <div id="content">
+        <div class="loader"><i class="fas fa-circle-notch fa-spin"></i> جاري مزامنة البيانات...</div>
     </div>
 </main>
 
 <script>
-    // استخدام بروكسي جديد ورابط API بديل للضمان
-    const API_CONFIG = {
-        URL: 'https://al-mushahid.com/api/matches/', // API بديل نشط
-        PROXY: 'https://corsproxy.io/?', // بروكسي سريع ومجاني
-        LOGO: 'https://cdn.kora-api.space/uploads/team/'
-    };
-
-    let currentFilter = 'all';
+    const SOURCE_URL = "https://ebengaza1.kesug.com/";
+    const PROXY = "https://corsproxy.io/?url=";
     let selectedDate = new Date().toISOString().split('T')[0];
+    let currentFilter = 'all';
 
-    function renderCalendar() {
-        const container = document.getElementById('calendar-days');
-        container.innerHTML = '';
-        const days = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+    // 1. إنشاء التقويم
+    function initCalendar() {
+        const cal = document.getElementById('calendar');
+        cal.innerHTML = '';
+        const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
         
-        for (let i = -2; i <= 2; i++) {
-            const d = new Date();
+        for (let i = -2; i <= 3; i++) {
+            let d = new Date();
             d.setDate(d.getDate() + i);
-            const dateStr = d.toISOString().split('T')[0];
-            const active = dateStr === selectedDate ? 'active' : '';
+            let dStr = d.toISOString().split('T')[0];
+            let active = dStr === selectedDate ? 'active' : '';
             
-            container.innerHTML += `
-                <div class="cal-day ${active}" onclick="changeDate('${dateStr}')">
-                    <span class="cal-day-name">${days[d.getDay()]}</span>
-                    <span class="cal-day-num">${d.getDate()}</span>
+            cal.innerHTML += `
+                <div class="date-item ${active}" onclick="changeDate('${dStr}')">
+                    <span class="d-name">${days[d.getDay()]}</span>
+                    <span class="d-num">${d.getDate()}</span>
                 </div>
             `;
         }
     }
 
-    async function fetchMatches() {
-        const content = document.getElementById('matches-content');
-        content.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin fa-2x"></i><br><br>جاري جلب المباريات...</div>';
+    // 2. جلب وتحليل البيانات من موقعك
+    async function fetchFromSource() {
+        const content = document.getElementById('content');
+        content.innerHTML = '<div class="loader"><i class="fas fa-circle-notch fa-spin"></i> جاري استخراج البيانات من المصدر...</div>';
 
         try {
-            // جلب البيانات مع تجاوز كاش البروكسي
-            const response = await fetch(`${API_CONFIG.PROXY}${encodeURIComponent(API_CONFIG.URL + selectedDate)}?v=${Math.random()}`);
-            const data = await response.json();
+            const target = `${SOURCE_URL}?d=${selectedDate}`;
+            const response = await fetch(PROXY + encodeURIComponent(target));
+            const html = await response.text();
             
-            // التأكد من أن البيانات موجودة بصيغة مصفوفة
-            const matches = data.matches || data; 
+            // تحويل النص إلى HTML Document للبحث بداخله
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const leagues = doc.querySelectorAll('.league-group');
 
-            if (Array.isArray(matches) && matches.length > 0) {
-                renderMatches(matches);
-            } else {
-                content.innerHTML = '<div class="empty-msg">لا توجد مباريات متاحة اليوم</div>';
+            if (leagues.length === 0) {
+                content.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">لا توجد مباريات متاحة في المصدر لهذا التاريخ.</div>';
+                return;
             }
+
+            renderData(leagues);
         } catch (error) {
-            console.error(error);
-            content.innerHTML = '<div class="empty-msg"><i class="fas fa-wifi"></i><br>عذراً، الرابط المصدر لا يستجيب حالياً.<br>حاول مرة أخرى لاحقاً.</div>';
+            content.innerHTML = '<div style="text-align:center; padding:50px; color:red;">خطأ في الاتصال بالمصدر. تأكد من أن الموقع يعمل.</div>';
         }
     }
 
-    function renderMatches(matches) {
-        const content = document.getElementById('matches-content');
+    // 3. عرض البيانات بتصميم Mondepro
+    function renderData(leagues) {
+        const content = document.getElementById('content');
         content.innerHTML = '';
 
-        let filtered = matches;
-        if (currentFilter === 'live') {
-            filtered = matches.filter(m => m.status == '1' || m.is_live);
-        }
+        leagues.forEach(league => {
+            const title = league.querySelector('.group-header').innerText;
+            const matches = league.querySelectorAll('.m-card');
+            let leagueHtml = `<div class="league-card"><div class="league-title"><i class="fas fa-trophy"></i> ${title}</div>`;
+            let hasVisibleMatch = false;
 
-        if (filtered.length === 0) {
-            content.innerHTML = '<div class="empty-msg">لا توجد مباريات جارية حالياً</div>';
-            return;
-        }
+            matches.forEach(match => {
+                const homeName = match.querySelectorAll('.t-name')[0].innerText;
+                const homeLogo = match.querySelectorAll('.m-logo')[0].src;
+                const awayName = match.querySelectorAll('.t-name')[1].innerText;
+                const awayLogo = match.querySelectorAll('.m-logo')[1].src;
+                const score = match.querySelector('.match-time-txt').innerText;
+                const status = match.querySelector('.match-status-txt').innerText;
+                const isLive = match.querySelector('.m-live-tag').classList.contains('live-now');
 
-        // تجميع حسب الدوري
-        const groups = {};
-        filtered.forEach(m => {
-            const leagueName = m.league || m.league_name || "بطولات أخرى";
-            if (!groups[leagueName]) groups[leagueName] = [];
-            groups[leagueName].push(m);
-        });
+                // فلترة المباشر
+                if (currentFilter === 'live' && !isLive) return;
+                hasVisibleMatch = true;
 
-        for (const league in groups) {
-            let matchesHtml = groups[league].map(m => {
-                const isLive = m.status == '1' ? 'live-now' : '';
-                const statusText = m.status == '1' ? 'بث مباشر' : (m.status == '2' ? 'انتهت' : m.time);
-                
-                return `
-                    <div class="m-card">
-                        <div class="m-live-tag ${isLive}">${statusText}</div>
-                        <div class="m-grid">
-                            <div class="team-box">
-                                <img src="${API_CONFIG.LOGO}${m.home_logo}" onerror="this.src='https://ui-avatars.com/api/?name=${m.home}&background=222&color=fff'">
-                                <span class="t-name">${m.home}</span>
+                leagueHtml += `
+                    <div class="match-item">
+                        ${isLive ? '<div class="live-label">مباشر</div>' : ''}
+                        <div class="match-grid">
+                            <div class="team">
+                                <img src="${homeLogo}">
+                                <span class="name">${homeName}</span>
                             </div>
-                            <div class="score-box">
-                                <div class="score-num">${m.score || '0 - 0'}</div>
-                                <div class="m-time">${m.time}</div>
+                            <div class="score-wrap">
+                                <div class="score">${score}</div>
+                                <span class="status">${status}</span>
                             </div>
-                            <div class="team-box">
-                                <img src="${API_CONFIG.LOGO}${m.away_logo}" onerror="this.src='https://ui-avatars.com/api/?name=${m.away}&background=222&color=fff'">
-                                <span class="t-name">${m.away}</span>
+                            <div class="team">
+                                <img src="${awayLogo}">
+                                <span class="name">${awayName}</span>
                             </div>
-                        </div>
-                        <div class="m-footer">
-                            <span><i class="fas fa-tv"></i> ${m.channel || 'غير معروفة'}</span>
-                            <span><i class="fas fa-microphone"></i> ${m.commentary || 'غير متوفر'}</span>
                         </div>
                     </div>
                 `;
-            }).join('');
+            });
 
-            content.innerHTML += `
-                <div class="league-group">
-                    <div class="group-header"><i class="fas fa-trophy"></i> ${league}</div>
-                    ${matchesHtml}
-                </div>
-            `;
+            leagueHtml += `</div>`;
+            if (hasVisibleMatch) content.innerHTML += leagueHtml;
+        });
+
+        if (content.innerHTML === '') {
+            content.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">لا توجد مباريات جارية حالياً.</div>';
         }
     }
 
+    // التحكم
     function changeDate(date) {
         selectedDate = date;
-        renderCalendar();
-        fetchMatches();
+        initCalendar();
+        fetchFromSource();
     }
 
-    function setFilter(type) {
+    function switchFilter(type) {
         currentFilter = type;
-        document.getElementById('btn-all').classList.toggle('active', type === 'all');
-        document.getElementById('btn-live').classList.toggle('active', type === 'live');
-        fetchMatches();
+        document.getElementById('all-tab').classList.toggle('active', type === 'all');
+        document.getElementById('live-tab').classList.toggle('active', type === 'live');
+        fetchFromSource();
     }
 
-    // التشغيل
     window.onload = () => {
-        renderCalendar();
-        fetchMatches();
+        initCalendar();
+        fetchFromSource();
+        // تحديث كل 30 ثانية
+        setInterval(fetchFromSource, 30000);
     };
 </script>
 
