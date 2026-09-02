@@ -1,207 +1,368 @@
 <!DOCTYPE html>
-<html dir='rtl' lang='ar'>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BALLONTV | سير تيفي - مباريات اليوم بث مباشر</title>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BALLON TV PRO | Ultra Engine</title>
+
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
         :root {
-            --Main-Color: #40137c; /* اللون الأرجواني الخاص بسير تيفي */
-            --Secondary-Color: #2f2f2f;
-            --Body-BG: #f0f2f5;
-            --Card-BG: #ffffff;
-            --Text-Color: #272727;
-            --Main-Border: 1px solid #d1e7ff;
-            --Main-Radius: 10px;
+            --primary: #ff0000;
+            --primary-glow: rgba(255, 0, 0, 0.5);
+            --bg: #0a0a0a;
+            --card-bg: rgba(25; 25, 25, 0.8);
+            --accent: #ffcc00;
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+            --nav-bg: rgba(15, 15, 15, 0.9);
         }
 
-        /* الوضع الليلي */
-        body.Night {
-            --Main-Color: #0e1019;
-            --Secondary-Color: #191d2d;
-            --Body-BG: #0e1019;
-            --Card-BG: #191d2d;
-            --Text-Color: #ffffff;
-            --Main-Border: 1px solid #252c37;
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, #1a0000 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #000 0%, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding-bottom: 80px; /* لشريط التنقل */
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--Body-BG); color: var(--Text-Color); transition: 0.3s; }
-
-        /* Header */
-        header.SiteHeader {
-            background: var(--Card-BG);
-            height: 80px;
+        /* تحسين الهيدر */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            padding: 15px 20px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 5%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky; top: 0; z-index: 1000;
-        }
-        .logo-area h1 { font-size: 24px; color: var(--Main-Color); font-weight: 800; }
-        .logo-area span { font-size: 14px; color: var(--Secondary-Color); display: block; margin-top: -5px; }
-
-        .header-tools { display: flex; gap: 15px; align-items: center; }
-        .btn-dark-mode { 
-            cursor: pointer; background: var(--Main-Color); color: #fff; 
-            padding: 8px 15px; border-radius: 50px; font-size: 12px; font-weight: 600;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Container */
-        .container { width: 100%; max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+        .brand-logo { font-weight: 900; font-size: 1.4rem; letter-spacing: -1px; }
+        .brand-logo span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
 
-        /* Match Table Style (Sir TV) */
-        .M-Table { background: var(--Card-BG); border-radius: var(--Main-Radius); overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        /* البحث */
+        .search-container {
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+        .search-bar {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 10px 15px;
+            width: 100%;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-bar:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+
+        .container { padding: 10px; max-width: 700px; margin: 0 auto; }
+
+        /* كرت المباراة المطور */
+        .match-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .match-card:active { transform: scale(0.98); }
+
+        .league-header {
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-align: center;
+            background: rgba(255,204,0,0.05);
+            padding: 4px 12px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 0 auto 15px auto;
+            border: 0.5px solid rgba(255,204,0,0.2);
+            font-weight: bold;
+        }
+
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            align-items: center;
+            text-align: center;
+        }
+
+        .team-box img {
+            width: 55px; height: 55px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+            transition: 0.5s;
+        }
+        .team-name { font-size: 0.85rem; font-weight: 700; margin-top: 8px; }
+
+        .score-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .score-text { font-size: 1.8rem; font-weight: 900; color: #fff; }
+        .match-time { font-size: 0.75rem; color: var(--text-dim); background: #000; padding: 2px 8px; border-radius: 5px; }
+
+        /* الأوسمة */
+        .badge-live { background: #ff0000; color: white; animation: blink 1s infinite; }
+        .badge-soon { background: #333; color: #ccc; }
+        .badge-end { background: #1a1a1a; color: #555; }
+        .status-badge { font-size: 0.6rem; padding: 3px 10px; border-radius: 4px; font-weight: 900; }
+
+        @keyframes blink { 50% { opacity: 0.4; } }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 2000;
+        }
+        .nav-item { color: var(--text-dim); text-decoration: none; text-align: center; font-size: 0.7rem; flex: 1; }
+        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #121212 25%, #1a1a1a 50%, #121212 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 15px;
+            height: 150px;
+            margin-bottom: 15px;
+        }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* المودال */
+        .modal-sheet {
+            position: fixed; bottom: -100%; left: 0; width: 100%;
+            background: #0f0f0f; border-radius: 25px 25px 0 0;
+            z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px; border-top: 2px solid var(--primary);
+        }
+        .modal-sheet.show { bottom: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2500; backdrop-filter: blur(4px); }
         
-        .TitleBox { 
-            background: var(--Card-BG); padding: 15px; border-bottom: var(--Main-Border);
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        .server-btn {
+            background: #1a1a1a; padding: 15px; border-radius: 12px;
+            display: flex; justify-content: space-between; margin-bottom: 10px;
+            border: 1px solid #333; cursor: pointer; color: white; text-decoration: none;
         }
-        .TitleBox h2 { font-size: 18px; border-right: 4px solid var(--Main-Color); padding-right: 10px; }
 
-        /* Tabs (أزرار الأيام) */
-        ul.nav-tabs { display: flex; list-style: none; gap: 8px; }
-        ul.nav-tabs li a { 
-            display: block; padding: 5px 15px; border-radius: 5px; font-size: 13px; 
-            font-weight: 600; text-decoration: none; color: #fff;
-        }
-        .Yes a { background: #4267b2; } /* الأمس */
-        .Tod a { background: #b51818; } /* اليوم */
-        .Tom a { background: #fab000; } /* الغد */
-
-        /* Matches Grid */
-        .MatchesFlex { padding: 15px; }
-
-        /* News Grid (Blogger Style) */
-        .grid-posts {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px; margin-top: 20px;
-        }
-        .post-card {
-            background: var(--Card-BG); border-radius: var(--Main-Radius); overflow: hidden;
-            border: var(--Main-Border); transition: 0.3s; cursor: pointer;
-        }
-        .post-card:hover { transform: translateY(-5px); }
-        .post-img { width: 100%; height: 140px; background: #ddd; position: relative; }
-        .post-img img { width: 100%; height: 100%; object-fit: cover; }
-        .post-info { padding: 12px; text-align: center; }
-        .post-info h3 { font-size: 14px; height: 40px; overflow: hidden; }
-
-        /* Footer */
-        footer { background: var(--Card-BG); padding: 30px 0; margin-top: 40px; border-top: var(--Main-Border); text-align: center; }
-        .footer-links { margin-top: 10px; font-size: 13px; }
-        .footer-links a { margin: 0 10px; color: var(--Main-Color); font-weight: 600; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .TitleBox { flex-direction: column; text-align: center; }
-            ul.nav-tabs { width: 100%; justify-content: center; }
-            .grid-posts { grid-template-columns: repeat(2, 1fr); }
-        }
+        /* قسم الأخبار */
+        #news-section { display: none; width: 100%; height: calc(100vh - 130px); border: none; }
     </style>
 </head>
-<body class="">
+<body>
 
-<header class='SiteHeader'>
-    <div class="logo-area">
-        <h1>سير تيفي</h1>
-        <span>sirrtv.online</span>
-    </div>
-    <div class="header-tools">
-        <div class="btn-dark-mode" onclick="toggleMode()">الوضع الليلي</div>
-    </div>
-</header>
+    <header class="app-header">
+        <div class="brand-logo">BALLON<span>TV PRO</span></div>
+        <div id="live-clock" style="color: var(--primary); font-size: 0.8rem; font-weight: bold;">00:00:00</div>
+    </header>
 
-<div class='container'>
-    <!-- جدول المباريات -->
-    <div class='M-Table'>
-        <div class='TitleBox'>
-            <h2 class='Title'>مباريات اليوم بث مباشر</h2>
-            <ul class='nav-tabs'>
-                <li class='Yes'><a href='#'>الأمس</a></li>
-                <li class='Tod'><a href='#'>اليوم</a></li>
-                <li class='Tom'><a href='#'>الغد</a></li>
-            </ul>
+    <div id="main-content">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="ابحث عن مباراة أو فريق...">
         </div>
-        <div class='MatchesFlex' id="matches-table">
-            <!-- جلب المباريات من السيرفر المذكور في كودك -->
-            <script src="https://kora.rabab-khalifa2050.workers.dev/matches?type=today&style=2"></script>
+
+        <div class="container" id="matches-container">
+            <!-- Skeleton Loading -->
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
         </div>
     </div>
 
-    <!-- شبكة الأخبار/الفيديوهات -->
-    <div class="grid-posts">
-        <!-- مقال 1 -->
-        <div class="post-card" onclick="window.location.href='https://ballon17.github.io/ballontv/'">
-            <div class="post-img">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgYFwZnP0tvNb0SIr7uCZk0S31wYPTU064Mpny00MDJFm8QLz9fJaVmjTuQu3hMlZ1Yhig67wnxUTLMC0jdAsYpiCmPrE8CWu-hICjKFLaLMoxYmWSjEidrC9cfDafdNfxUYUbdLLWvn_mOvA1AayywAYajymaB7HlIz_WJ1bXMGmU-cEeEY3X1rNemTog=w400" alt="post">
-            </div>
-            <div class="post-info">
-                <h3>3 أسباب تجعل رافينيا يتمسك بالبقاء في برشلونة</h3>
-            </div>
-        </div>
-        <!-- مقال 2 -->
-        <div class="post-card" onclick="window.location.href='https://ballon17.github.io/ballontv/'">
-            <div class="post-img">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEj5CG8IFNprNLDNq1aCglYtPkUZm6U3l5OakEURvpTz_6UqWnhqgr4P-V5m-KP1pVzqPNrWAR3F29PZwltVTie6JgWvQy8acqG5AVjeip7D6RGn3M7h7SB4_KnHSN27BikNJHHytWP7-T__CFArCH91PsH171h8ySuJ7gDNbtBSgM9c1OaqJzA0jtrEMSU=w400" alt="post">
-            </div>
-            <div class="post-info">
-                <h3>لايبزيج يحدد شروط بيع لاعبه وسط اهتمام برشلونة</h3>
-            </div>
-        </div>
-        <!-- مقال 3 -->
-        <div class="post-card" onclick="window.location.href='https://ballon17.github.io/ballontv/'">
-            <div class="post-img">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjv6fZ7fWi8KWWAMP09CjdQe0vnA5IwCm57ULKNgw7Do1ngAmiy4VOiXKl7JF73MlIcnoybq26xot3CUb8eLETphoqx_3Pwj08929Y9BRoMHTfOdLL2FP6yKfU3dEWRsDASp5wYGPGoShPNnqiZHjJy1HUtUvkqcr1GfH-EdCiSaO6rW3As-ouGmvJxVh8=w400" alt="post">
-            </div>
-            <div class="post-info">
-                <h3>إينيجو مارتينيز يعرب عن رغبته في العودة إلى برشلونة</h3>
-            </div>
-        </div>
-        <!-- مقال 4 -->
-        <div class="post-card" onclick="window.location.href='https://ballon17.github.io/ballontv/'">
-            <div class="post-img">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgZJhylF35pVQoiDB4FZcOp3DEZu_-T9Rvv1pY0bndnugfYs4HwNvw9EJINLFspMCemF2pX21xuV46DNDbm54dYKthaDS51yzXWRKaMC2Lztkl-XqXmCLzWHb6w_sqxIBCk6XWl__M17cZpHYaS1kR4Ne0wQymL1KnpTysau-RE61ue8yFiG1vTitQFAJI=w400" alt="post">
-            </div>
-            <div class="post-info">
-                <h3>مزراوي يعبر عن إحباطه بعد تعادل مانشستر يونايتد</h3>
-            </div>
-        </div>
+    <!-- Iframe الأخبار -->
+    <iframe id="news-section" src="https://ebengaza1.kesug.com/news.html"></iframe>
+
+    <!-- شريط التنقل -->
+    <nav class="bottom-nav">
+        <a href="javascript:void(0)" class="nav-item active" onclick="showTab('matches', this)">
+            <i class="fas fa-futvol"></i> المباريات
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="showTab('news', this)">
+            <i class="fas fa-newspaper"></i> الأخبار
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-star"></i> المفضلة
+        </a>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+    <div class="modal-sheet" id="modal">
+        <div id="modal-content"></div>
     </div>
-</div>
 
-<footer>
-    <div class="container">
-        <b>سير تيفي | Sir TV</b>
-        <div class="footer-links">
-            <a href="#">Sirtv</a>
-            <a href="#">الرئيسية</a>
-            <a href="#">تواصل معنا</a>
-        </div>
-        <p style="margin-top: 15px; font-size: 11px; opacity: 0.6;">جميع الحقوق محفوظة © 2024</p>
-    </div>
-</footer>
+    <script>
+        const API_URL = 'https://ws.kora-api.space/api/matches/';
+        const LOGO_BASE = 'https://cdn.kora-api.space/uploads/team/';
+        const PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
+        let allMatches = [];
 
-<script>
-    // وظيفة تبديل الوضع الليلي
-    function toggleMode() {
-        document.body.classList.toggle('Night');
-        const isNight = document.body.classList.contains('Night');
-        localStorage.setItem('theme', isNight ? 'Night' : '');
-    }
+        // تحديث الساعة
+        setInterval(() => {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('ar-EG');
+        }, 1000);
 
-    // حفظ حالة الوضع الليلي عند تحديث الصفحة
-    window.onload = () => {
-        if (localStorage.getItem('theme') === 'Night') {
-            document.body.classList.add('Night');
+        // جلب البيانات مع التخزين المؤقت
+        async function loadMatches() {
+            const today = new Date().toISOString().split('T')[0];
+            const cachedData = localStorage.getItem(`matches_${today}`);
+            
+            // إذا وجدنا بيانات مخزنة، نعرضها فوراً ثم نحدثها في الخلفية
+            if (cachedData) {
+                allMatches = JSON.parse(cachedData);
+                renderMatches(allMatches);
+            }
+
+            try {
+                const response = await fetch(`${PROXY}${encodeURIComponent(API_URL + today + '/1')}`);
+                const data = await response.json();
+                
+                if (data && data.matches) {
+                    allMatches = data.matches;
+                    localStorage.setItem(`matches_${today}`, JSON.stringify(allMatches));
+                    renderMatches(allMatches);
+                }
+            } catch (error) {
+                if (!cachedData) {
+                    document.getElementById('matches-container').innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-exclamation-triangle mb-3"></i>
+                            <p>خطأ في تحميل البيانات. تأكد من اتصالك بالإنترنت.</p>
+                            <button onclick="loadMatches()" class="btn btn-sm btn-danger">إعادة المحاولة</button>
+                        </div>`;
+                }
+            }
         }
-    }
-</script>
 
+        function renderMatches(matches) {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = '';
+
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="text-center py-5">لا توجد مباريات اليوم</div>';
+                return;
+            }
+
+            matches.forEach((m, index) => {
+                let badgeClass = 'badge-soon', statusText = 'قريباً';
+                if (m.status == '1') { badgeClass = 'badge-live'; statusText = 'مباشر'; }
+                else if (m.status == '2') { badgeClass = 'badge-end'; statusText = 'انتهت'; }
+
+                const card = document.createElement('div');
+                card.className = 'match-card animate__animated animate__fadeIn';
+                card.onclick = () => openServers(m);
+                card.innerHTML = `
+                    <div class="league-header">${m.league}</div>
+                    <div class="vs-grid">
+                        <div class="team-box">
+                            <img src="${LOGO_BASE}${m.home_logo}" loading="lazy" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
+                            <div class="team-name">${m.home}</div>
+                        </div>
+                        <div class="score-wrap">
+                            <span class="status-badge ${badgeClass}">${statusText}</span>
+                            <div class="score-text">${m.score || 'vs'}</div>
+                            <div class="match-time">${m.time}</div>
+                        </div>
+                        <div class="team-box">
+                            <img src="${LOGO_BASE}${m.away_logo}" loading="lazy" onerror="this.src='https://cdn-icons-png.flaticon.com/512/53/53283.png'">
+                            <div class="team-name">${m.away}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content: space-between; margin-top: 15px; font-size: 0.65rem; color: #777; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 10px;">
+                        <span><i class="fas fa-microphone-alt"></i> ${m.commentary || 'غير مدرج'}</span>
+                        <span><i class="fas fa-tv"></i> ${m.channel || 'غير معروفة'}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // التبديل بين الأقسام
+        function showTab(tab, el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+
+            if (tab === 'news') {
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('news-section').style.display = 'block';
+            } else {
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('news-section').style.display = 'none';
+            }
+        }
+
+        // البحث الذكي
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allMatches.filter(m => 
+                m.home.toLowerCase().includes(query) || 
+                m.away.toLowerCase().includes(query) ||
+                m.league.toLowerCase().includes(query)
+            );
+            renderMatches(filtered);
+        });
+
+        // المودال والسيرفرات
+        function openServers(match) {
+            if (match.status == '2') return;
+            
+            const content = document.getElementById('modal-content');
+            content.innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 style="font-weight:900;">اختر سيرفر المشاهدة</h4>
+                    <p style="color:var(--primary); font-weight:bold;">${match.home} vs ${match.away}</p>
+                </div>
+                <div class="server-btn" onclick="launchApp('0001', '${match.home} vs ${match.away}')">
+                    <span><i class="fas fa-play me-2"></i> سيرفر HD رئيسي</span>
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="server-btn" onclick="launchApp('0002', '${match.home} vs ${match.away}')">
+                    <span><i class="fas fa-play me-2"></i> سيرفر متعدد الجودات</span>
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+            `;
+            document.getElementById('modal').classList.add('show');
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function launchApp(id, title) {
+            const intent = `intent://open?id=${id}&title=${encodeURIComponent(title)}#Intent;scheme=ballon;package=com.ballon.player;end`;
+            window.location.href = intent;
+        }
+
+        window.onload = loadMatches;
+    </script>
 </body>
 </html>
