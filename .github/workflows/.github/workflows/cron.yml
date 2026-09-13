@@ -1,0 +1,32 @@
+name: Auto Update Mondepro Engine
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Dependencies
+      run: pip install requests
+
+    - name: Run Fetch Script
+      run: python update_matches.py
+
+    - name: Commit and Push Changes
+      run: |
+        git config --global user.name "Mondepro-Bot"
+        git config --global user.email "bot@mondepro.local"
+        git add matches.json
+        git commit -m "Auto-update: Matches Data [skip ci]" || exit 0
+        git push
