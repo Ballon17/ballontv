@@ -3,11 +3,11 @@
 <head> 
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
-    <title>Mondepro Ultra | Admin & Live Edition</title> 
+    <title>Mondepro Ultra | Serverless Edition</title> 
     <!-- Fonts & Icons --> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cloudflare.com"> 
+    <link href="https://googleapis.com" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://cloudflare.com"/>
 <style> 
     :root { --bg: #050505; --card: #121212; --accent: #ffcc00; --text: #ffffff; --dim: #a0a0a0; --live: #ff0000; }
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
@@ -44,14 +44,11 @@
     .admin-edit-btn:hover { background: var(--accent); color: #000; }
     
     .m-grid { display: grid; grid-template-columns: 1fr 100px 1fr; align-items: center; text-align: center; } 
-    .team img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); } 
+    .team img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; } 
     .team .t-name { font-size: 13px; font-weight: 900; color: #fff; }
     .score-area { display: flex; flex-direction: column; align-items: center; } 
     .score-box { font-size: 20px; font-weight: 900; color: var(--accent); background: #000; padding: 5px 10px; border-radius: 12px; border: 1px solid #333; min-width: 80px; letter-spacing: 1px; } 
     .m-time { font-size: 11px; color: #fff; margin-top: 8px; font-weight: bold; opacity: 0.8; }
-    
-    .m-meta { margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: center; gap: 15px; font-size: 11px; color: #666; } 
-    .m-meta span i { color: var(--accent); margin-left: 4px; }
     
     /* PLAYER OVERLAY */
     .player-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 10px; backdrop-filter: blur(10px); }
@@ -127,216 +124,169 @@
     </div>
     <div class="form-group">
         <label>السيرفر الأول (رابط iframe أو Embed مباشر)</label>
-        <input type="text" id="srvUrl1" class="form-control" placeholder="قم بلصق رابط سيرفر البث الأول هنا">
-    </div>
-    <div class="form-group">
-        <label>السيرفر الثاني (اختياري)</label>
-        <input type="text" id="srvUrl2" class="form-control" placeholder="قم بلصق رابط سيرفر البث الثاني هنا">
-    </div>
-    <div class="form-group">
-        <label>السيرفر الثالث (اختياري)</label>
-        <input type="text" id="srvUrl3" class="form-control" placeholder="قم بلصق رابط سيرفر البث الثالث هنا">
-    </div>
-    <div class="admin-btns">
-        <button class="btn-save" onclick="saveMatchLinks()">حفظ البث وتحديث المشغل</button>
-        <button class="btn-close" onclick="closeAdminPanel()">إلغاء</button>
-    </div>
-</div>
 
-<script> 
-const CONFIG = {
-    PROXY: 'https://api.codetabs.com/v1/proxy?quest=',
-    API: 'https://api-ar.ysscores.com/api/matches/matches_date_get/'
-};
+السيرفر الثاني (اختياري)
 
-let currentFilter = 'all'; 
+السيرفر الثالث (اختياري)
+
+حفظ البث وتحديث المشغل
+إلغاء
+
+let currentFilter = 'all';
 let selectedDate = new Date().toISOString().split('T')[0];
 let isAdminMode = false;
 let globalMatchesCache = [];
 let customStreamsDB = JSON.parse(localStorage.getItem('mondepro_streams')) || {};
 
-setInterval(() => { 
-    const now = new Date(); 
-    document.getElementById('live-time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0'); 
+setInterval(() => {
+const now = new Date();
+document.getElementById('live-time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0');
 }, 1000);
 
-function initCalendar() { 
-    const cal = document.getElementById('calendar'); 
-    cal.innerHTML = ''; 
-    const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']; 
-    for (let i = -2; i <= 3; i++) { 
-        let d = new Date(); 
-        d.setDate(d.getDate() + i); 
-        let dStr = d.toISOString().split('T')[0]; 
-        let active = dStr === selectedDate ? 'active' : ''; 
-        cal.innerHTML += ` 
-            <div class="date-card ${active}" onclick="updateDate('${dStr}')"> 
-                <span class="day-name">${dayNames[d.getDay()]}</span> 
-                <span class="day-num">${d.getDate()}</span> 
-            </div> `; 
-    } 
+function initCalendar() {
+const cal = document.getElementById('calendar');
+cal.innerHTML = '';
+const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+for (let i = -2; i <= 3; i++) {
+let d = new Date();
+d.setDate(d.getDate() + i);
+let dStr = d.toISOString().split('T')[0];
+let active = dStr === selectedDate ? 'active' : '';
+cal.innerHTML += <div class="date-card ${active}" onclick="updateDate('${dStr}')"> <span class="day-name">${dayNames[d.getDay()]}</span> <span class="day-num">${d.getDate()}</span> </div>;
+}
 }
 
-async function fetchMatches() { 
-    const content = document.getElementById('content'); 
-    content.innerHTML = '<div class="loader"><div class="spinner"></div><p>جاري مزامنة السيرفر السحابي...</p></div>';
-    
-    // محاولة جلب ملف matches.json أولاً
-    try { 
-        const response = await fetch('./matches.json?t=' + new Date().getTime());
-        if (!response.ok) throw new Error("Local file not found or invalid");
-        const result = await response.json(); 
-        if (result && result.data && result.data.length > 0) { 
-            globalMatchesCache = result.data;
-            renderMatches(result.data); 
-            return;
-        } 
-    } catch (localError) { 
-        console.log("Matches.json not ready or offline, switching to live proxy mode...");
-    }
+async function fetchMatches() {
+const content = document.getElementById('content');
+content.innerHTML = 'جاري سحب المباريات الحية...';
 
-    // إذا فشل جلب الملف المحلي، يعمل كحل احتياطي فوري وجلب مباشر عبر البروكسي لمنع توقف الموقع
-    try {
-        const targetUrl = `${CONFIG.API}${selectedDate}/%5B%5D/%5B%5D/%5B%5D/D/180`;
-        const fallbackResponse = await fetch(`${CONFIG.PROXY}${encodeURIComponent(targetUrl)}`);
-        const result = await fallbackResponse.json();
-        if (result && result.data && result.data.length > 0) {
-            globalMatchesCache = result.data;
-            renderMatches(result.data);
-        } else {
-            content.innerHTML = '<div class="error-msg"><p>لا توجد مباريات مجدولة لهذا اليوم.</p></div>';
-        }
-    } catch (proxyError) {
-        content.innerHTML = '<div class="error-msg"><p>خطأ في المزامنة. يرجى التأكد من رفع ملف matches.json أو تشغيل أداة الأتمتة.</p></div>';
-    }
+const liveApiUrl = https://ysscores.com{selectedDate}/%5B%5D/%5B%5D/%5B%5D/D/180;
+const proxyUrl = 'codetabs.com';
+
+try {
+const response = await fetch(${proxyUrl}${encodeURIComponent(liveApiUrl)});
+const result = await response.json();
+if (result && result.data && result.data.length > 0) {
+globalMatchesCache = result.data;
+renderMatches(result.data);
+} else {
+content.innerHTML = 'لا توجد مباريات مجدولة لهذا اليوم.';
+}
+} catch(err) {
+content.innerHTML = 'خطأ في الاتصال بالشبكة الحية. يرجى إعادة تحميل الصفحة.';
+}
 }
 
-function renderMatches(matches) { 
-    const content = document.getElementById('content'); 
-    content.innerHTML = '';
-    let filtered = currentFilter === 'live' ? matches.filter(m => m.match_status === 'live' || m.match_status === '1') : matches;
-    if (filtered.length === 0) { 
-        content.innerHTML = '<div class="error-msg"><p>لا توجد مباريات جارية حالياً.</p></div>'; 
-        return; 
-    }
-    const leagues = {}; 
-    filtered.forEach(m => { 
-        const leagueName = m.championship ? m.championship.title : "بطولات مختلفة";
-        if (!leagues[leagueName]) leagues[leagueName] = []; 
-        leagues[leagueName].push(m); 
-    });
-    for (const leagueName in leagues) { 
-        let matchesHtml = leagues[leagueName].map(m => { 
-            const isLive = m.match_status === 'live' || m.match_status === '1';
-            const homeName = m.home_team ? m.home_team.title : 'غير معروف';
-            const awayName = m.away_team ? m.away_team.title : 'غير معروف';
-            const scoreDisplay = m.match_status === 'not_started' ? 'vs' : `${m.home_scores} - ${m.away_scores}`;
-            const matchTitleStr = `${homeName} × ${awayName}`;
-            const displayEditBtn = isAdminMode ? 'block' : 'none';
-            return ` 
-                <div class="match-card" onclick="handleMatchClick(event, '${matchTitleStr}', '${m.id}')"> 
-                    <button class="admin-edit-btn" style="display:${displayEditBtn}" onclick="openAdminPanel(event, '${matchTitleStr}', '${m.id}')"><i class="fas fa-cog"></i> إعدادات البث</button>
-                    ${isLive ? '<div class="live-badge">LIVE</div>' : ''} 
-                    <div class="m-grid"> 
-                        <div class="team"> 
-                            <img src="${m.home_team?.logo || ''}" onerror="this.src='https://ui-avatars.com/api/?name=H'"> 
-                            <div class="t-name">${homeName}</div> 
-                        </div> 
-                        <div class="score-area"> 
-                            <div class="score-box">${scoreDisplay}</div> 
-                            <div class="m-time">${m.match_time || '--:--'}</div> 
-                        </div> 
-                        <div class="team"> 
-                            <img src="${m.away_team?.logo || ''}" onerror="this.src='https://ui-avatars.com/api/?name=A'"> 
-                            <div class="t-name">${awayName}</div> 
-                        </div> 
-                    </div> 
-                </div> `; 
-        }).join('');
-        content.innerHTML += `<div class="league-group"><div class="league-head"><i class="fas fa-trophy"></i> ${leagueName}</div>${matchesHtml}</div>`; 
-    } 
+function renderMatches(matches) {
+const content = document.getElementById('content');
+content.innerHTML = '';
+let filtered = currentFilter === 'live' ? matches.filter(m => m.match_status === 'live' || m.match_status === '1') : matches;
+if (filtered.length === 0) {
+content.innerHTML = 'لا توجد مباريات جارية حالياً.';
+return;
+}
+const leagues = {};
+filtered.forEach(m => {
+const leagueName = m.championship ? m.championship.title : "بطولات مختلفة";
+if (!leagues[leagueName]) leagues[leagueName] = [];
+leagues[leagueName].push(m);
+});
+for (const leagueName in leagues) {
+let matchesHtml = leagues[leagueName].map(m => {
+const isLive = m.match_status === 'live' || m.match_status === '1';
+const homeName = m.home_team ? m.home_team.title : 'غير معروف';
+const awayName = m.away_team ? m.away_team.title : 'غير معروف';
+const scoreDisplay = m.match_status === 'not_started' ? 'vs' : ${m.home_scores} - ${m.away_scores};
+const matchTitleStr = ${homeName} × ${awayName};
+const displayEditBtn = isAdminMode ? 'block' : 'none';
+return <div class="match-card" onclick="handleMatchClick(event, '${matchTitleStr}', '${m.id}')"> <button class="admin-edit-btn" style="display:${displayEditBtn}" onclick="openAdminPanel(event, '${matchTitleStr}', '${m.id}')"><i class="fas fa-cog"></i> إعدادات البث</button> ${isLive ? '<div class="live-badge">LIVE</div>' : ''} <div class="m-grid"> <div class="team"> <img src="${m.home_team?.logo || ''}" onerror="this.src='https://ui-avatars.com'"> <div class="t-name">${homeName}</div> </div> <div class="score-area"> <div class="score-box">${scoreDisplay}</div> <div class="m-time">${m.match_time || '--:--'}</div> </div> <div class="team"> <img src="${m.away_team?.logo || ''}" onerror="this.src='https://ui-avatars.com'"> <div class="t-name">${awayName}</div> </div> </div> </div>;
+}).join('');
+content.innerHTML += <div class="league-group"><div class="league-head"><i class="fas fa-trophy"></i> ${leagueName}</div>${matchesHtml}</div>;
+}
 }
 
 function handleMatchClick(event, title, matchId) {
-    if(event.target.classList.contains('admin-edit-btn') || event.target.parentElement.classList.contains('admin-edit-btn')) return;
-    openPlayer(title, matchId);
+if(event.target.classList.contains('admin-edit-btn') || event.target.parentElement.classList.contains('admin-edit-btn')) return;
+openPlayer(title, matchId);
 }
 
 function openPlayer(title, matchId) {
-    document.getElementById('playerTitle').innerText = title;
-    const serverList = document.getElementById('serverList');
-    serverList.innerHTML = '';
-    const savedLinks = customStreamsDB[matchId] || [];
-    if (savedLinks.length === 0 || savedLinks.every(url => url === "")) {
-        serverList.innerHTML = '<p style="color:#ffcc00; font-size:11px; padding:10px 15px; font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> لم يتم إضافة روابط بث لهذه المباراة بعد.</p>';
-        document.getElementById('liveFrame').src = '';
-    } else {
-        let firstActiveSet = false;
-        savedLinks.forEach((url, index) => {
-            if(url && url.trim() !== "") {
-                const btn = document.createElement('button');
-                btn.className = `server-btn ${!firstActiveSet ? 'active' : ''}`;
-                btn.innerText = `سيرفر ${index + 1}`;
-                btn.onclick = () => {
-                    document.getElementById('liveFrame').src = url;
-                    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                };
-                serverList.appendChild(btn);
-                if(!firstActiveSet) {
-                    document.getElementById('liveFrame').src = url;
-                    firstActiveSet = true;
-                }
-            }
-        });
-    }
-    document.getElementById('playerOverlay').style.display = 'flex';
+document.getElementById('playerTitle').innerText = title;
+const serverList = document.getElementById('serverList');
+serverList.innerHTML = '';
+const savedLinks = customStreamsDB[matchId] || [];
+if (savedLinks.length === 0 || savedLinks.every(url => url === "")) {
+serverList.innerHTML = ' لم يتم إضافة روابط بث لهذه المباراة بعد.';
+document.getElementById('liveFrame').src = '';
+} else {
+let firstActiveSet = false;
+savedLinks.forEach((url, index) => {
+if(url && url.trim() !== "") {
+const btn = document.createElement('button');
+btn.className = server-btn ${!firstActiveSet ? 'active' : ''};
+btn.innerText = سيرفر ${index + 1};
+btn.onclick = () => {
+document.getElementById('liveFrame').src = url;
+document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+};
+serverList.appendChild(btn);
+if(!firstActiveSet) {
+document.getElementById('liveFrame').src = url;
+firstActiveSet = true;
+}
+}
+});
+}
+document.getElementById('playerOverlay').style.display = 'flex';
 }
 
 function closePlayer() {
-    document.getElementById('playerOverlay').style.display = 'none';
-    document.getElementById('liveFrame').src = '';
+document.getElementById('playerOverlay').style.display = 'none';
+document.getElementById('liveFrame').src = '';
 }
 
 function triggerAdmin() {
-    const password = prompt("أدخل كلمة مرور الإدارة لفتح لوحة التحكم:");
-    if (password === "1234") {
-        isAdminMode = !isAdminMode;
-        alert(isAdminMode ? "تم تفعيل لوحة التحكم!" : "تم إغلاق لوحة التحكم.");
-        renderMatches(globalMatchesCache);
-    } else if (password !== null) {
-        alert("كلمة المرور غير صحيحة!");
-    }
+const password = prompt("أدخل كلمة مرور الإدارة لفتح لوحة التحكم:");
+if (password === "1234") {
+isAdminMode = !isAdminMode;
+alert(isAdminMode ? "تم تفعيل لوحة التحكم!" : "تم إغلاق لوحة التحكم.");
+renderMatches(globalMatchesCache);
+} else if (password !== null) {
+alert("كلمة المرور غير صحيحة!");
+}
 }
 
 function openAdminPanel(event, title, matchId) {
-    event.stopPropagation(); 
-    document.getElementById('targetMatchId').innerText = `ID: ${matchId}`;
-    document.getElementById('admMatchTitle').value = title;
-    const existing = customStreamsDB[matchId] || ["", "", ""];
-    document.getElementById('srvUrl1').value = existing[0] || "";
-    document.getElementById('srvUrl2').value = existing[1] || "";
-    document.getElementById('srvUrl3').value = existing[2] || "";
-    document.getElementById('adminPanel').style.display = 'block';
+event.stopPropagation();
+document.getElementById('targetMatchId').innerText = ID: ${matchId};
+document.getElementById('admMatchTitle').value = title;
+const existing = customStreamsDB[matchId] || ["", "", ""];
+document.getElementById('srvUrl1').value = existing[0] || "";
+document.getElementById('srvUrl2').value = existing[1] || "";
+document.getElementById('srvUrl3').value = existing[2] || "";
+document.getElementById('adminPanel').style.display = 'block';
 }
 
 function saveMatchLinks() {
-    const matchId = document.getElementById('targetMatchId').innerText.replace('ID: ', '');
-    const url1 = document.getElementById('srvUrl1').value.trim();
-    const url2 = document.getElementById('srvUrl2').value.trim();
-    const url3 = document.getElementById('srvUrl3').value.trim();
-    customStreamsDB[matchId] = [url1, url2, url3];
-    localStorage.setItem('mondepro_streams', JSON.stringify(customStreamsDB));
-    alert("تم حفظ روابط البث بنجاح!");
-    closeAdminPanel();
-    renderMatches(globalMatchesCache);
+const matchId = document.getElementById('targetMatchId').innerText.replace('ID: ', '');
+const url1 = document.getElementById('srvUrl1').value.trim();
+const url2 = document.getElementById('srvUrl2').value.trim();
+const url3 = document.getElementById('srvUrl3').value.trim();
+customStreamsDB[matchId] = [url1, url2, url3];
+localStorage.setItem('mondepro_streams', JSON.stringify(customStreamsDB));
+alert("تم حفظ روابط البث بنجاح!");
+closeAdminPanel();
+renderMatches(globalMatchesCache);
 }
 
-function closeAdminPanel() { document.getElementById('adminPanel').style.display = 'none'; }
+document.addEventListener("DOMContentLoaded", () => {
+initCalendar();
+fetchMatches();
+setInterval(fetchMatches, 60000);
+});
+
 function updateDate(date) { selectedDate = date; initCalendar(); fetchMatches(); }
 function setFilter(type, el) { currentFilter = type; document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); fetchMatches(); }
-
-window.onload = () => { initCalendar(); fetchMatches(); setInterval(fetchMatches, 60000); };
-</script>
 </body>
 </html>
