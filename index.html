@@ -144,6 +144,11 @@
 </div>
 
 <script> 
+const CONFIG = {
+    PROXY: 'https://api.codetabs.com/v1/proxy?quest=',
+    API: 'https://api-ar.ysscores.com/api/matches/matches_date_get/'
+};
+
 let currentFilter = 'all'; 
 let selectedDate = new Date().toISOString().split('T')[0];
 let isAdminMode = false;
@@ -175,18 +180,35 @@ function initCalendar() {
 async function fetchMatches() { 
     const content = document.getElementById('content'); 
     content.innerHTML = '<div class="loader"><div class="spinner"></div><p>جاري مزامنة السيرفر السحابي...</p></div>';
+    
+    // محاولة جلب ملف matches.json أولاً
     try { 
         const response = await fetch('./matches.json?t=' + new Date().getTime());
+        if (!response.ok) throw new Error("Local file not found or invalid");
         const result = await response.json(); 
         if (result && result.data && result.data.length > 0) { 
             globalMatchesCache = result.data;
             renderMatches(result.data); 
-        } else { 
-            content.innerHTML = '<div class="error-msg"><p>لا توجد مباريات مجدولة لهذا اليوم.</p></div>'; 
+            return;
         } 
-    } catch (error) { 
-        content.innerHTML = '<div class="error-msg"><p>خطأ في التزامن مع ملف matches.json.</p></div>'; 
-    } 
+    } catch (localError) { 
+        console.log("Matches.json not ready or offline, switching to live proxy mode...");
+    }
+
+    // إذا فشل جلب الملف المحلي، يعمل كحل احتياطي فوري وجلب مباشر عبر البروكسي لمنع توقف الموقع
+    try {
+        const targetUrl = `${CONFIG.API}${selectedDate}/%5B%5D/%5B%5D/%5B%5D/D/180`;
+        const fallbackResponse = await fetch(`${CONFIG.PROXY}${encodeURIComponent(targetUrl)}`);
+        const result = await fallbackResponse.json();
+        if (result && result.data && result.data.length > 0) {
+            globalMatchesCache = result.data;
+            renderMatches(result.data);
+        } else {
+            content.innerHTML = '<div class="error-msg"><p>لا توجد مباريات مجدولة لهذا اليوم.</p></div>';
+        }
+    } catch (proxyError) {
+        content.innerHTML = '<div class="error-msg"><p>خطأ في المزامنة. يرجى التأكد من رفع ملف matches.json أو تشغيل أداة الأتمتة.</p></div>';
+    }
 }
 
 function renderMatches(matches) { 
