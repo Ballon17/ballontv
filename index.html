@@ -3,7 +3,7 @@
 <head> 
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
-    <title>Mondepro Ultra | Serverless Edition</title> 
+    <title>Mondepro Ultra | Fixed Live Edition</title> 
     <!-- Fonts & Icons --> 
     <link rel="stylesheet" href="https://cloudflare.com"> 
     <link href="https://googleapis.com" rel="stylesheet"> 
@@ -79,9 +79,6 @@
     .loader { text-align: center; padding: 80px 20px; } 
     .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
     @keyframes spin { to { transform: rotate(360deg); } } 
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } } 
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .error-msg { text-align: center; padding: 40px; color: var(--dim); } 
 </style>
 </head>
 <body>
@@ -123,9 +120,15 @@
         <input type="text" id="admMatchTitle" class="form-control" readonly style="opacity:0.6;">
     </div>
     <div class="form-group">
-        <label>السيرفر الأول (رابط iframe أو Embed مباشر)</label>
+        <label>السيرفر الأول</label>
+        <input type="text" id="srvUrl1" class="form-control" placeholder="رابط البث الأول هنا">
+    </div>
+    <div class="form-group">
+        <label>السيرفر الثاني</label>
+        <input type="text" id="srvUrl2" class="form-control" placeholder="رابط البث الثاني هنا">
+    </div>
+    <div class="form-group">
 
-السيرفر الثاني (اختياري)
 
 السيرفر الثالث (اختياري)
 
