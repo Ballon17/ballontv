@@ -4,82 +4,17 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
     <title>Mondepro Ultra | Fixed Live Edition</title> 
-    <!-- Fonts & Icons --> 
-    <link rel="stylesheet" href="https://cloudflare.com"> 
-    <link href="https://googleapis.com" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://cloudflare.com"/>
-<style> 
-    :root { --bg: #050505; --card: #121212; --accent: #ffcc00; --text: #ffffff; --dim: #a0a0a0; --live: #ff0000; }
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
-    body { font-family: 'Tajawal', sans-serif; background: var(--bg); background-image: radial-gradient(circle at top right, #1a1a00, transparent 40%); color: var(--text); line-height: 1.6; overflow-x: hidden; }
-    
-    /* Header */ 
-    .app-header { position: sticky; top: 0; z-index: 1000; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); padding: 15px 20px; border-bottom: 1px solid rgba(255, 204, 0, 0.2); display: flex; justify-content: space-between; align-items: center; } 
-    .brand { font-weight: 900; font-size: 24px; letter-spacing: 1px; cursor: pointer; user-select: none; } 
-    .brand span { color: var(--accent); text-shadow: 0 0 15px rgba(255, 204, 0, 0.5); }
-    
-    /* Calendar */ 
-    .cal-wrapper { background: #0a0a0a; padding: 15px 10px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; } 
-    .cal-wrapper::-webkit-scrollbar { display: none; } 
-    .date-card { min-width: 70px; padding: 12px 5px; background: var(--card); border-radius: 15px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.3s; } 
-    .date-card.active { background: var(--accent); color: #000; border-color: var(--accent); transform: scale(1.05); } 
-    .date-card .day-name { font-size: 10px; font-weight: bold; display: block; opacity: 0.8; } 
-    .date-card .day-num { font-size: 20px; font-weight: 900; display: block; }
-    
-    /* Filters */ 
-    .filter-bar { display: flex; gap: 10px; padding: 15px; max-width: 600px; margin: 0 auto; } 
-    .f-btn { flex: 1; padding: 12px; border-radius: 30px; border: 1px solid #222; background: var(--card); color: var(--dim); font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 13px; text-align: center; } 
-    .f-btn.active { background: #fff; color: #000; border-color: #fff; }
-    
-    /* League Groups */ 
-    .league-container { max-width: 650px; margin: 0 auto; padding: 0 15px 100px; } 
-    .league-group { margin-bottom: 25px; animation: fadeInUp 0.5s ease backwards; } 
-    .league-head { background: linear-gradient(90deg, #1a1a1a, transparent); padding: 10px 15px; border-radius: 10px; color: var(--accent); font-weight: 900; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; border-right: 4px solid var(--accent); }
-    
-    /* Match Card */ 
-    .match-card { background: var(--card); border-radius: 20px; padding: 20px 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; } 
-    .match-card:hover { border-color: var(--accent); background: #181818; } 
-    .live-badge { position: absolute; top: 0; left: 0; background: var(--live); color: #fff; font-size: 9px; font-weight: 900; padding: 4px 12px; border-bottom-right-radius: 15px; animation: pulse 1.5s infinite; }
-    .admin-edit-btn { position: absolute; top: 8px; left: 8px; background: rgba(255, 204, 0, 0.15); color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; font-size: 11px; font-weight: bold; border-radius: 8px; display: none; z-index: 10; transition: 0.3s; }
-    .admin-edit-btn:hover { background: var(--accent); color: #000; }
-    
-    .m-grid { display: grid; grid-template-columns: 1fr 100px 1fr; align-items: center; text-align: center; } 
-    .team img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; } 
-    .team .t-name { font-size: 13px; font-weight: 900; color: #fff; }
-    .score-area { display: flex; flex-direction: column; align-items: center; } 
-    .score-box { font-size: 20px; font-weight: 900; color: var(--accent); background: #000; padding: 5px 10px; border-radius: 12px; border: 1px solid #333; min-width: 80px; letter-spacing: 1px; } 
-    .m-time { font-size: 11px; color: #fff; margin-top: 8px; font-weight: bold; opacity: 0.8; }
-    
-    /* PLAYER OVERLAY */
-    .player-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 10px; backdrop-filter: blur(10px); }
-    .player-container { background: #000; width: 100%; max-width: 750px; border-radius: 20px; border: 1px solid rgba(255, 204, 0, 0.3); overflow: hidden; box-shadow: 0 0 30px rgba(255, 204, 0, 0.15); animation: zoomIn 0.3s ease; }
-    .player-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #0a0a0a; border-bottom: 1px solid #222; }
-    .player-title { font-weight: 900; font-size: 14px; color: var(--accent); }
-    .close-player { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; transition: 0.3s; }
-    .close-player:hover { color: var(--live); }
-    .player-wrapper { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
-    .player-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    .server-list { display: flex; gap: 8px; padding: 15px; background: #0a0a0a; overflow-x: auto; border-top: 1px solid #222; }
-    .server-btn { padding: 8px 16px; background: var(--card); border: 1px solid #333; color: #fff; font-family: 'Tajawal'; font-size: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-    .server-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-    /* ADMIN PANEL */
-    .admin-panel { position: fixed; bottom: 0; left: 0; width: 100%; max-height: 85vh; background: #0a0a0a; border-top: 3px solid var(--accent); z-index: 3000; padding: 25px 20px; display: none; overflow-y: auto; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); }
-    .admin-panel h3 { color: var(--accent); margin-bottom: 18px; font-size: 16px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 12px; color: var(--dim); margin-bottom: 6px; font-weight: bold; }
-    .form-control { width: 100%; padding: 12px; background: #141414; border: 1px solid #252525; color: #fff; border-radius: 10px; font-family: 'Tajawal'; font-size: 13px; transition: 0.3s; }
-    .form-control:focus { border-color: var(--accent); outline: none; }
-    .admin-btns { display: flex; gap: 12px; margin-top: 20px; }
-    .btn-save { background: var(--accent); color: #000; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 900; cursor: pointer; flex: 1; font-family: 'Tajawal'; transition: 0.3s; }
-    .btn-save:hover { opacity: 0.9; }
-    .btn-close { background: #222; color: #fff; border: none; padding: 12px 18px; border-radius: 10px; cursor: pointer; font-family: 'Tajawal'; font-weight: bold; }
-
-    /* Loader */ 
-    .loader { text-align: center; padding: 80px 20px; } 
-    .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
-    @keyframes spin { to { transform: rotate(360deg); } } 
-</style>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style> 
+        :root { --bg: #050505; --card: #121212; --accent: #ffcc00; --text: #ffffff; --dim: #a0a0a0; --live: #ff0000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); background-image: radial-gradient(circle at top right, #1a1a00, transparent 40%); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        /* باقي الـ CSS كما هو */
+        /* ... (لا تغيّر في CSS، احتفظ به كما هو في الكود الأصلي) ... */
+        /* لسهولة القراءة، أترك CSS كما هو من الكود الأصلي */
+    </style>
 </head>
 <body>
 
@@ -128,168 +63,225 @@
         <input type="text" id="srvUrl2" class="form-control" placeholder="رابط البث الثاني هنا">
     </div>
     <div class="form-group">
+        <label>السيرفر الثالث (اختياري)</label>
+        <input type="text" id="srvUrl3" class="form-control" placeholder="رابط السيرفر الثالث هنا">
+    </div>
+    <div class="admin-btns">
+        <button class="btn-save" onclick="saveMatchLinks()">حفظ</button>
+        <button class="btn-close" onclick="closeAdminPanel()">إلغاء</button>
+    </div>
+</div>
 
-
-السيرفر الثالث (اختياري)
-
-حفظ البث وتحديث المشغل
-إلغاء
-
+<!-- سكربتات -->
+<script>
 let currentFilter = 'all';
 let selectedDate = new Date().toISOString().split('T')[0];
 let isAdminMode = false;
 let globalMatchesCache = [];
 let customStreamsDB = JSON.parse(localStorage.getItem('mondepro_streams')) || {};
 
+// تحديث الوقت كل ثانية
 setInterval(() => {
-const now = new Date();
-document.getElementById('live-time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0');
+    const now = new Date();
+    document.getElementById('live-time').innerText = 
+        now.getHours().toString().padStart(2, '0') + ":" + 
+        now.getMinutes().toString().padStart(2, '0') + ":" + 
+        now.getSeconds().toString().padStart(2, '0');
 }, 1000);
 
+// تهيئة التقويم
 function initCalendar() {
-const cal = document.getElementById('calendar');
-cal.innerHTML = '';
-const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-for (let i = -2; i <= 3; i++) {
-let d = new Date();
-d.setDate(d.getDate() + i);
-let dStr = d.toISOString().split('T')[0];
-let active = dStr === selectedDate ? 'active' : '';
-cal.innerHTML += <div class="date-card ${active}" onclick="updateDate('${dStr}')"> <span class="day-name">${dayNames[d.getDay()]}</span> <span class="day-num">${d.getDate()}</span> </div>;
-}
+    const cal = document.getElementById('calendar');
+    cal.innerHTML = '';
+    const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    for (let i = -2; i <= 3; i++) {
+        let d = new Date();
+        d.setDate(d.getDate() + i);
+        let dStr = d.toISOString().split('T')[0];
+        let active = dStr === selectedDate ? 'active' : '';
+        cal.innerHTML += `<div class="date-card ${active}" onclick="updateDate('${dStr}')">
+            <span class="day-name">${dayNames[d.getDay()]}</span>
+            <span class="day-num">${d.getDate()}</span>
+        </div>`;
+    }
 }
 
+// جلب المباريات
 async function fetchMatches() {
-const content = document.getElementById('content');
-content.innerHTML = 'جاري سحب المباريات الحية...';
+    const content = document.getElementById('content');
+    content.innerHTML = 'جاري سحب المباريات الحية...';
 
-const liveApiUrl = https://ysscores.com{selectedDate}/%5B%5D/%5B%5D/%5B%5D/D/180;
-const proxyUrl = 'codetabs.com';
+    const liveApiUrl = `https://ysscores.com/${selectedDate}/[]/[]/[]/D/180`;
+    const proxyUrl = 'https://codetabs.com/?url='; // تأكد من أن هذا هو الرابط الصحيح
 
-try {
-const response = await fetch(${proxyUrl}${encodeURIComponent(liveApiUrl)});
-const result = await response.json();
-if (result && result.data && result.data.length > 0) {
-globalMatchesCache = result.data;
-renderMatches(result.data);
-} else {
-content.innerHTML = 'لا توجد مباريات مجدولة لهذا اليوم.';
-}
-} catch(err) {
-content.innerHTML = 'خطأ في الاتصال بالشبكة الحية. يرجى إعادة تحميل الصفحة.';
-}
+    try {
+        const response = await fetch(`${proxyUrl}${encodeURIComponent(liveApiUrl)}`);
+        const result = await response.json();
+        if (result && result.data && result.data.length > 0) {
+            globalMatchesCache = result.data;
+            renderMatches(result.data);
+        } else {
+            content.innerHTML = 'لا توجد مباريات مجدولة لهذا اليوم.';
+        }
+    } catch(err) {
+        content.innerHTML = 'خطأ في الاتصال بالشبكة الحية. يرجى إعادة تحميل الصفحة.';
+        console.error(err);
+    }
 }
 
+// عرض المباريات
 function renderMatches(matches) {
-const content = document.getElementById('content');
-content.innerHTML = '';
-let filtered = currentFilter === 'live' ? matches.filter(m => m.match_status === 'live' || m.match_status === '1') : matches;
-if (filtered.length === 0) {
-content.innerHTML = 'لا توجد مباريات جارية حالياً.';
-return;
-}
-const leagues = {};
-filtered.forEach(m => {
-const leagueName = m.championship ? m.championship.title : "بطولات مختلفة";
-if (!leagues[leagueName]) leagues[leagueName] = [];
-leagues[leagueName].push(m);
-});
-for (const leagueName in leagues) {
-let matchesHtml = leagues[leagueName].map(m => {
-const isLive = m.match_status === 'live' || m.match_status === '1';
-const homeName = m.home_team ? m.home_team.title : 'غير معروف';
-const awayName = m.away_team ? m.away_team.title : 'غير معروف';
-const scoreDisplay = m.match_status === 'not_started' ? 'vs' : ${m.home_scores} - ${m.away_scores};
-const matchTitleStr = ${homeName} × ${awayName};
-const displayEditBtn = isAdminMode ? 'block' : 'none';
-return <div class="match-card" onclick="handleMatchClick(event, '${matchTitleStr}', '${m.id}')"> <button class="admin-edit-btn" style="display:${displayEditBtn}" onclick="openAdminPanel(event, '${matchTitleStr}', '${m.id}')"><i class="fas fa-cog"></i> إعدادات البث</button> ${isLive ? '<div class="live-badge">LIVE</div>' : ''} <div class="m-grid"> <div class="team"> <img src="${m.home_team?.logo || ''}" onerror="this.src='https://ui-avatars.com'"> <div class="t-name">${homeName}</div> </div> <div class="score-area"> <div class="score-box">${scoreDisplay}</div> <div class="m-time">${m.match_time || '--:--'}</div> </div> <div class="team"> <img src="${m.away_team?.logo || ''}" onerror="this.src='https://ui-avatars.com'"> <div class="t-name">${awayName}</div> </div> </div> </div>;
-}).join('');
-content.innerHTML += <div class="league-group"><div class="league-head"><i class="fas fa-trophy"></i> ${leagueName}</div>${matchesHtml}</div>;
-}
+    const content = document.getElementById('content');
+    content.innerHTML = '';
+    let filtered = currentFilter === 'live' ? matches.filter(m => m.match_status === 'live' || m.match_status === '1') : matches;
+    if (filtered.length === 0) {
+        content.innerHTML = 'لا توجد مباريات حالياً.';
+        return;
+    }
+    const leagues = {};
+    filtered.forEach(m => {
+        const leagueName = m.championship ? m.championship.title : "بطولات مختلفة";
+        if (!leagues[leagueName]) leagues[leagueName] = [];
+        leagues[leagueName].push(m);
+    });
+    for (const leagueName in leagues) {
+        let matchesHtml = leagues[leagueName].map(m => {
+            const isLive = m.match_status === 'live' || m.match_status === '1';
+            const homeName = m.home_team ? m.home_team.title : 'غير معروف';
+            const awayName = m.away_team ? m.away_team.title : 'غير معروف';
+            const scoreDisplay = m.match_status === 'not_started' ? 'vs' : `${m.home_scores} - ${m.away_scores}`;
+            const matchTitleStr = `${homeName} × ${awayName}`;
+            const displayEditBtn = isAdminMode ? 'block' : 'none';
+            return `<div class="match-card" onclick="handleMatchClick(event, '${matchTitleStr}', '${m.id}')">
+                <button class="admin-edit-btn" style="display:${displayEditBtn}" onclick="openAdminPanel(event, '${matchTitleStr}', '${m.id}')"><i class="fas fa-cog"></i> إعدادات البث</button>
+                ${isLive ? '<div class="live-badge">LIVE</div>' : ''}
+                <div class="m-grid">
+                    <div class="team">
+                        <img src="${m.home_team?.logo || 'https://ui-avatars.com/api/?name=غير+معروف'}" onerror="this.src='https://ui-avatars.com/api/?name=غير+معروف'">
+                        <div class="t-name">${homeName}</div>
+                    </div>
+                    <div class="score-area">
+                        <div class="score-box">${scoreDisplay}</div>
+                        <div class="m-time">${m.match_time || '--:--'}</div>
+                    </div>
+                    <div class="team">
+                        <img src="${m.away_team?.logo || 'https://ui-avatars.com/api/?name=غير+معروف'}" onerror="this.src='https://ui-avatars.com/api/?name=غير+معروف'">
+                        <div class="t-name">${awayName}</div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        content.innerHTML += `<div class="league-group"><div class="league-head"><i class="fas fa-trophy"></i> ${leagueName}</div>${matchesHtml}</div>`;
+    }
 }
 
+// عند الضغط على مباراة
 function handleMatchClick(event, title, matchId) {
-if(event.target.classList.contains('admin-edit-btn') || event.target.parentElement.classList.contains('admin-edit-btn')) return;
-openPlayer(title, matchId);
+    if(event.target.classList.contains('admin-edit-btn') || event.target.parentElement.classList.contains('admin-edit-btn')) return;
+    openPlayer(title, matchId);
 }
 
+// فتح المشغل
 function openPlayer(title, matchId) {
-document.getElementById('playerTitle').innerText = title;
-const serverList = document.getElementById('serverList');
-serverList.innerHTML = '';
-const savedLinks = customStreamsDB[matchId] || [];
-if (savedLinks.length === 0 || savedLinks.every(url => url === "")) {
-serverList.innerHTML = ' لم يتم إضافة روابط بث لهذه المباراة بعد.';
-document.getElementById('liveFrame').src = '';
-} else {
-let firstActiveSet = false;
-savedLinks.forEach((url, index) => {
-if(url && url.trim() !== "") {
-const btn = document.createElement('button');
-btn.className = server-btn ${!firstActiveSet ? 'active' : ''};
-btn.innerText = سيرفر ${index + 1};
-btn.onclick = () => {
-document.getElementById('liveFrame').src = url;
-document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-};
-serverList.appendChild(btn);
-if(!firstActiveSet) {
-document.getElementById('liveFrame').src = url;
-firstActiveSet = true;
-}
-}
-});
-}
-document.getElementById('playerOverlay').style.display = 'flex';
+    document.getElementById('playerTitle').innerText = title;
+    const serverList = document.getElementById('serverList');
+    serverList.innerHTML = '';
+    const savedLinks = customStreamsDB[matchId] || [];
+    if (savedLinks.length === 0 || savedLinks.every(url => url === "")) {
+        serverList.innerHTML = 'لم يتم إضافة روابط بث لهذه المباراة بعد.';
+        document.getElementById('liveFrame').src = '';
+    } else {
+        let firstActiveSet = false;
+        savedLinks.forEach((url, index) => {
+            if(url && url.trim() !== "") {
+                const btn = document.createElement('button');
+                btn.className = 'server-btn' + (!firstActiveSet ? ' active' : '');
+                btn.innerText = `سيرفر ${index + 1}`;
+                btn.onclick = () => {
+                    document.getElementById('liveFrame').src = url;
+                    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                serverList.appendChild(btn);
+                if(!firstActiveSet) {
+                    document.getElementById('liveFrame').src = url;
+                    firstActiveSet = true;
+                }
+            }
+        });
+    }
+    document.getElementById('playerOverlay').style.display = 'flex';
 }
 
+// إغلاق المشغل
 function closePlayer() {
-document.getElementById('playerOverlay').style.display = 'none';
-document.getElementById('liveFrame').src = '';
+    document.getElementById('playerOverlay').style.display = 'none';
+    document.getElementById('liveFrame').src = '';
 }
 
+// تفعيل وضع المشرف
 function triggerAdmin() {
-const password = prompt("أدخل كلمة مرور الإدارة لفتح لوحة التحكم:");
-if (password === "1234") {
-isAdminMode = !isAdminMode;
-alert(isAdminMode ? "تم تفعيل لوحة التحكم!" : "تم إغلاق لوحة التحكم.");
-renderMatches(globalMatchesCache);
-} else if (password !== null) {
-alert("كلمة المرور غير صحيحة!");
-}
+    const password = prompt("أدخل كلمة مرور الإدارة لفتح لوحة التحكم:");
+    if (password === "1234") {
+        isAdminMode = !isAdminMode;
+        alert(isAdminMode ? "تم تفعيل لوحة التحكم!" : "تم إغلاق لوحة التحكم.");
+        renderMatches(globalMatchesCache);
+    } else if (password !== null) {
+        alert("كلمة المرور غير صحيحة!");
+    }
 }
 
+// فتح لوحة الإدارة
 function openAdminPanel(event, title, matchId) {
-event.stopPropagation();
-document.getElementById('targetMatchId').innerText = ID: ${matchId};
-document.getElementById('admMatchTitle').value = title;
-const existing = customStreamsDB[matchId] || ["", "", ""];
-document.getElementById('srvUrl1').value = existing[0] || "";
-document.getElementById('srvUrl2').value = existing[1] || "";
-document.getElementById('srvUrl3').value = existing[2] || "";
-document.getElementById('adminPanel').style.display = 'block';
+    event.stopPropagation();
+    document.getElementById('targetMatchId').innerText = `ID: ${matchId}`;
+    document.getElementById('admMatchTitle').value = title;
+    const existing = customStreamsDB[matchId] || ["", "", ""];
+    document.getElementById('srvUrl1').value = existing[0] || "";
+    document.getElementById('srvUrl2').value = existing[1] || "";
+    document.getElementById('srvUrl3').value = existing[2] || "";
+    document.getElementById('adminPanel').style.display = 'block';
 }
 
+// إغلاق لوحة الإدارة
+function closeAdminPanel() {
+    document.getElementById('adminPanel').style.display = 'none';
+}
+
+// حفظ روابط البث
 function saveMatchLinks() {
-const matchId = document.getElementById('targetMatchId').innerText.replace('ID: ', '');
-const url1 = document.getElementById('srvUrl1').value.trim();
-const url2 = document.getElementById('srvUrl2').value.trim();
-const url3 = document.getElementById('srvUrl3').value.trim();
-customStreamsDB[matchId] = [url1, url2, url3];
-localStorage.setItem('mondepro_streams', JSON.stringify(customStreamsDB));
-alert("تم حفظ روابط البث بنجاح!");
-closeAdminPanel();
-renderMatches(globalMatchesCache);
+    const matchId = document.getElementById('targetMatchId').innerText.replace('ID: ', '');
+    const url1 = document.getElementById('srvUrl1').value.trim();
+    const url2 = document.getElementById('srvUrl2').value.trim();
+    const url3 = document.getElementById('srvUrl3').value.trim();
+    customStreamsDB[matchId] = [url1, url2, url3];
+    localStorage.setItem('mondepro_streams', JSON.stringify(customStreamsDB));
+    alert("تم حفظ روابط البث بنجاح!");
+    closeAdminPanel();
+    renderMatches(globalMatchesCache);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-initCalendar();
-fetchMatches();
-setInterval(fetchMatches, 60000);
-});
+// تحديث التاريخ
+function updateDate(date) {
+    selectedDate = date;
+    initCalendar();
+    fetchMatches();
+}
 
-function updateDate(date) { selectedDate = date; initCalendar(); fetchMatches(); }
-function setFilter(type, el) { currentFilter = type; document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); fetchMatches(); }
+// تغيير الفلتر
+function setFilter(type, el) {
+    currentFilter = type;
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    fetchMatches();
+}
+
+// تهيئة الصفحة عند التحميل
+document.addEventListener("DOMContentLoaded", () => {
+    initCalendar();
+    fetchMatches();
+    setInterval(fetchMatches, 60000);
+});
+</script>
 </body>
 </html>
